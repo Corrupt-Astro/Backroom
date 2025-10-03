@@ -1,0 +1,938 @@
+:root {
+  --bg-color: #1a1a1a; /* Very dark grey, almost black */
+  --card-color: rgba(30, 30, 30, 0.7); /* Slightly less transparent */
+  --text-color: #e0e0e0; /* Off-white for general text */
+  --header-color: #f0f0f0; /* Brighter off-white for headers */
+  --input-bg: #2b2b2b; /* Dark grey for input background */
+  --input-border: #555; /* Medium grey for input border */
+  --button-bg: #4a4a4a; /* Darker grey for general buttons */
+  --button-hover-bg: #6a6a6a; /* Lighter grey on hover */
+  --output-bg: rgba(40, 40, 40, 0.8); /* Slightly less transparent output */
+  --border-radius: 12px; /* Slightly larger border radius */
+  --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9); /* More prominent, darker shadow */
+  --save-button-bg: #28a745; /* Green */
+  --save-button-hover-bg: #218838;
+  --load-button-bg: #007bff; /* Blue */
+  --load-button-hover-bg: #0056b3;
+  --delete-button-bg: #dc3545; /* Red */
+  --delete-button-hover-bg: #c82333;
+
+  /* New: Modal Specific Colors */
+  --modal-bg-color: #2a2a2a; /* Darker grey for modal background */
+  --modal-text-color: #f0f0f0; /* Light text for modal */
+  --modal-header-color: #fff; /* White for modal headers */
+  --modal-input-bg: #3a3a3a; /* Slightly lighter blue for modal inputs */
+  --modal-input-border: #666; /* Blue border for modal inputs */
+  --modal-button-bg: #007bff; /* Blue button for modal */
+  --modal-button-hover-bg: #0056b3; /* Darker blue on hover */
+
+  --game-button-bg: #e7a51c; /* Orange/Gold for new game button */
+  --game-button-hover-bg: #c98e15;
+
+  --scp-button-bg: #8c0000; /* Dark red for SCP button */
+  --scp-button-hover-bg: #6b0000;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Changed to column to stack elements */
+  justify-content: flex-start; /* Align content to the top */
+  align-items: center; /* Center horizontally */
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  background-image: url('/img-2025-02-25-14-08-54.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Keep background fixed */
+  color: var(--text-color);
+  padding: 40px 0; /* Add padding top/bottom */
+  position: relative; /* For absolute positioning of button */
+  /* Add a subtle overlay for better text readability on background */
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Darker overlay */
+    z-index: -1; /* Behind content */
+  }
+}
+
+.site-logo {
+  display: block;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto 24px auto;
+  filter: brightness(1) contrast(1.1);
+}
+
+.top-message {
+  width: 90%; /* Match container width */
+  max-width: 1000px; /* Match container max-width */
+  text-align: center;
+  background-color: rgba(255, 255, 0, 0.9); /* Slightly less transparent */
+  color: #333;
+  padding: 12px 0; /* Increased padding */
+  font-family: 'Roboto Mono', monospace;
+  font-weight: bold;
+  font-size: 22px; /* Slightly larger font */
+  margin-bottom: 30px; /* More space between message and container */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* More prominent shadow */
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.7); /* More prominent text shadow */
+  border-radius: var(--border-radius); /* Apply border-radius */
+}
+
+/* New Game Button Styling */
+.new-game-button {
+  display: block; /* Make it a block element to control width and margin */
+  width: fit-content; /* Fit content */
+  max-width: 90%; /* Limit width on smaller screens */
+  margin: 0px auto 30px auto; /* Center horizontally, add margin below */
+  background-color: var(--game-button-bg);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 17px;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  text-align: center; /* Center text inside the button */
+  /* RAINBOW EFFECT */
+  background-image: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red, violet);
+  background-size: 200% auto; /* Make the gradient wider than the text */
+  color: white; /* Ensure text color is visible */
+  -webkit-text-fill-color: white; /* Ensure text color is visible */
+  animation: rainbow-shine 4s linear infinite; /* Animate the gradient */
+}
+
+.new-game-button:hover {
+  background-color: var(--game-button-hover-bg);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);
+  /* Keep rainbow effect on hover, prevent background-color from overriding */
+  background-image: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red, violet);
+  background-size: 200% auto;
+  color: white; /* Ensure text color is visible on hover */
+  -webkit-text-fill-color: white; /* Ensure text color is visible on hover */
+}
+
+/* SCP Generator Button Styling */
+.scp-generator-button {
+  display: block; /* Make it a block element to control width and margin */
+  width: fit-content; /* Fit content */
+  max-width: 90%; /* Limit width on smaller screens */
+  margin: 0px auto 30px auto; /* Center horizontally, add margin below */
+  background-color: var(--scp-button-bg);
+  color: black; /* Changed to black */
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 17px;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  text-align: center; /* Center text inside the button */
+  background-image: linear-gradient(to right, #8c0000, #a00000, #b40000, #a00000, #8c0000); /* Dark red gradient */
+  background-size: 200% auto;
+  color: black;
+  -webkit-text-fill-color: black; /* Changed to black */
+  animation: scp-shine 3s linear infinite; /* Animate the gradient */
+  /* VHS effect */
+  filter: blur(0.5px) grayscale(0.2) contrast(1.2); /* Subtle blur, grayscale, and contrast */
+  text-shadow: 1px 1px 2px rgba(255, 0, 0, 0.7), -1px -1px 2px rgba(0, 255, 255, 0.7); /* Red and cyan ghosting */
+  position: relative; /* For glitch effect */
+  overflow: hidden; /* Hide overflowing glitch */
+}
+
+.scp-generator-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0%,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    animation: scanline-glitch 2.5s infinite alternate; /* Subtle scanline glitch */
+}
+
+.scp-generator-button:hover {
+  background-color: var(--scp-button-hover-bg);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);
+  background-image: linear-gradient(to right, #8c0000, #a00000, #b40000, #a00000, #8c0000);
+  background-size: 200% auto;
+  color: black;
+  -webkit-text-fill-color: black;
+}
+
+/* Keyframes for rainbow animation */
+@keyframes rainbow-shine {
+  to {
+    background-position: -200% center; /* Move gradient from right to left */
+  }
+}
+
+/* Keyframes for SCP button animation */
+@keyframes scp-shine {
+  to {
+    background-position: -200% center; /* Move gradient from right to left */
+  }
+}
+
+/* Keyframes for VHS scanline glitch effect */
+@keyframes scanline-glitch {
+    0% { transform: translateY(0); opacity: 0.8; }
+    100% { transform: translateY(20%); opacity: 0.7; }
+}
+
+/* Existing Expeditions Button Styling */
+.expeditions-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000; /* Ensure it's on top */
+  background-color: var(--load-button-bg); /* Blue */
+  color: white;
+  padding: 12px 25px; /* Increased padding */
+  border-radius: 8px; /* Slightly larger radius */
+  font-family: 'Roboto Mono', monospace;
+  font-size: 17px; /* Slightly larger font */
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5); /* More prominent shadow */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.expeditions-button:hover {
+  background-color: var(--load-button-hover-bg);
+  transform: translateY(-3px); /* More pronounced lift */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.6);
+}
+
+.container {
+  background-color: transparent; /* Card handles background */
+  padding: 0; /* Card handles padding */
+  border-radius: var(--border-radius);
+  width: 90%; /* Use a bit more width */
+  max-width: 1100px; /* Increase max-width for overall layout */
+  box-shadow: none; /* Card handles shadow */
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px; /* More space below title */
+  color: var(--header-color);
+  font-family: 'Roboto Mono', monospace; /* Use mono font for headings */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); /* More prominent text shadow */
+  letter-spacing: 2.5px; /* Add some letter spacing */
+  font-size: 3em; /* Larger main title */
+}
+
+h2, h3 {
+    text-align: center;
+    margin-bottom: 25px; /* More space */
+    color: var(--header-color);
+    font-family: 'Roboto Mono', monospace;
+    text-shadow: 0 0 7px rgba(255, 255, 255, 0.3);
+    font-size: 2em; /* Larger section titles */
+}
+
+.subtitle {
+  text-align: center;
+  margin: -20px 0 40px 0;
+  color: var(--header-color);
+  font-family: 'Roboto Mono', monospace;
+  opacity: 0.9;
+}
+
+.card {
+  background-color: var(--card-color);
+  padding: 40px; /* Increased padding */
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 60px; /* More space between cards */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible border */
+  backdrop-filter: blur(8px); /* Add a subtle blur effect to card background */
+  position: relative;
+  overflow: hidden; /* ensure scanlines don't pass outside the card */
+  isolation: isolate; /* confine blend modes within the card */
+}
+
+.collapse-toggle {
+  position: absolute; top: 18px; right: 18px;
+  padding: 6px 12px; font-size: 0.85em;
+}
+
+.card.collapsed .input-group,
+.card.collapsed .button-group,
+.card.collapsed .output-container { display: none; }
+
+.level-creator {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 30px; /* More space between input groups */
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 12px; /* More space below label */
+  font-weight: bold;
+  color: var(--text-color);
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 1px;
+  font-size: 1.1em;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  padding: 16px; /* More padding */
+  border: 1px solid var(--input-border);
+  border-radius: 8px; /* Slightly larger radius */
+  font-size: 1em; /* Consistent font size */
+  box-sizing: border-box;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-family: 'Roboto Mono', monospace;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease; /* Add transitions */
+}
+
+.input-group input[type="text"]:focus,
+.input-group input[type="number"]:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    border-color: #a0a0a0; /* Stronger highlight on focus */
+    box-shadow: 0 0 12px rgba(180, 180, 180, 0.4);
+    background-color: #3b3b3b; /* Slightly lighter on focus */
+    outline: none; /* Remove default outline */
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 160px; /* Increased min-height */
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping for multiple options */
+  gap: 20px; /* Space between radio items */
+}
+
+.input-group input[type="radio"] {
+  appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid #ffea00;
+  background: transparent;
+  box-shadow: 0 0 8px rgba(255,234,0,.6), 0 0 18px rgba(255,234,0,.35);
+  position: relative; cursor: pointer;
+}
+
+.input-group input[type="radio"]:checked::after {
+  content: ""; position: absolute; top: 50%; left: 50%;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #ffea00; transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(255,234,0,.9), 0 0 22px rgba(255,234,0,.6);
+}
+
+.input-group input[type="radio"]:focus {
+  outline: none;
+  box-shadow: 0 0 12px rgba(255,234,0,.95), 0 0 26px rgba(255,234,0,.6);
+}
+
+.radio-group input[type="radio"] {
+  margin-right: 8px; /* More space */
+  accent-color: #888; /* Lighter accent color for radio */
+  transform: scale(1.3); /* Slightly larger radio buttons */
+}
+
+.radio-group label {
+  margin-right: 0; /* Remove default margin */
+  font-weight: normal;
+  color: var(--text-color);
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.button-group {
+    display: flex;
+    gap: 25px; /* More space between buttons */
+    margin-top: 40px; /* More space above button group */
+    justify-content: center; /* Center buttons */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+button {
+  padding: 16px 35px; /* More padding */
+  font-size: 1.1em; /* Larger font */
+  color: var(--text-color);
+  background-color: var(--button-bg);
+  border: none;
+  border-radius: 8px; /* Slightly larger radius */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.2s ease;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 1px;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6); /* More prominent shadow on hover */
+  transform: translateY(-3px); /* Subtle lift effect */
+}
+
+button:active {
+    background-color: #555; /* Darker on click */
+    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.4); /* More prominent press effect */
+    transform: translateY(0);
+}
+
+/* Specific button styles */
+button#saveLevelBtn, button#saveEntityBtn, button#saveSubLevelBtn {
+    background-color: var(--save-button-bg);
+}
+button#saveLevelBtn:hover, button#saveEntityBtn:hover, button#saveSubLevelBtn:hover {
+    background-color: var(--save-button-hover-bg);
+}
+
+/* Saved Items Section Styling */
+.saved-items {
+    margin-top: 60px; /* Consistent margin */
+}
+
+.saved-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.saved-list li {
+    background-color: rgba(0, 0, 0, 0.4); /* Darker background for list items */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Slightly more visible border */
+    border-radius: 8px;
+    padding: 15px 20px; /* More padding */
+    margin-bottom: 15px; /* More space */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Roboto Mono', monospace;
+    word-break: break-word;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.4); /* Subtle shadow for list items */
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.saved-list li:hover {
+    transform: translateX(8px); /* Slide effect on hover */
+    background-color: rgba(0, 0, 0, 0.5); /* Slightly darker on hover */
+}
+
+.saved-item-info {
+    flex-grow: 1;
+    margin-right: 25px;
+    font-size: 1em; /* Consistent font size */
+}
+
+.saved-item-buttons {
+    display: flex;
+    gap: 10px; /* More space */
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.saved-item-buttons button {
+    padding: 8px 16px; /* More padding */
+    font-size: 0.9em; /* Slightly smaller font for list buttons */
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.saved-item-buttons .load-btn {
+    background-color: var(--load-button-bg);
+}
+.saved-item-buttons .load-btn:hover {
+    background-color: var(--load-button-hover-bg);
+}
+
+.saved-item-buttons .delete-btn {
+    background-color: var(--delete-button-bg);
+}
+.saved-item-buttons .delete-btn:hover {
+    background-color: var(--delete-button-hover-bg);
+}
+
+#imageContainer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#imageContainer img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#textDescriptionContainer {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
+  color: #eee;
+  white-space: pre-line;
+}
+
+.entity-generator {
+  margin-top: 40px;
+}
+
+.entity-generator h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #eee;
+}
+
+#entityDescriptionContainer {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+    color: #eee;
+    white-space: pre-line;
+}
+
+/* New styling for entity image container */
+#entityImageContainer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#entityImageContainer img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Consolidated output container styling for consistency */
+.output-container {
+  margin-top: 40px;
+  background-color: var(--output-bg);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  white-space: pre-line;
+  word-break: break-word; /* Prevent long words from overflowing */
+  font-family: 'Roboto Mono', monospace;
+  line-height: 1.8; /* Increased line height for readability */
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+  font-size: 0.95em;
+}
+
+.output-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* Slightly larger radius */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8); /* More prominent shadow */
+  display: block; /* Center image */
+  margin: 0 auto; /* Center image */
+}
+
+.entity-generator, .sublevel-generator {
+  margin-top: 60px; /* Consistent margin for sections */
+}
+
+/* New: Modal Styles for Expedition */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1001; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85); /* Darker overlay for modal */
+  padding-top: 60px;
+  backdrop-filter: blur(10px); /* Stronger blur for modal background */
+}
+
+.modal-content {
+  background-color: var(--modal-bg-color); /* Dark grey for the modal */
+  margin: 5% auto;
+  padding: 40px;
+  border: 1px solid var(--modal-input-border); /* Use new border color for modal */
+  width: 80%;
+  max-width: 800px; /* Increased max-width for modal */
+  border-radius: var(--border-radius);
+  position: relative;
+  box-shadow: var(--box-shadow);
+  color: var(--modal-text-color); /* Apply light text color to modal content */
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: var(--modal-header-color); /* Use new header color for modal */
+  font-family: 'Roboto Mono', monospace;
+  margin-bottom: 35px;
+  font-size: 2.2em;
+  letter-spacing: 1.5px;
+}
+
+.modal-content .radio-group {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping for multiple radio options */
+  gap: 20px; /* Add some space between radio button labels */
+  align-items: center;
+}
+
+.modal-content .radio-group input[type="radio"] {
+  margin-right: 8px;
+}
+
+.modal-content .radio-group label {
+  margin-right: 0; /* Remove default right margin to avoid double spacing with gap */
+  font-size: 1em;
+}
+
+.modal-content .input-group label {
+  color: var(--modal-text-color);
+  font-size: 1.1em;
+}
+
+.modal-content .input-group input[type="text"],
+.modal-content .input-group select,
+.modal-content .input-group textarea {
+  background-color: var(--modal-input-bg);
+  border-color: var(--modal-input-border);
+  color: var(--modal-text-color);
+  padding: 14px;
+  font-size: 1em;
+}
+
+.modal-content .input-group input[type="text"]:focus,
+.modal-content .input-group select:focus,
+.modal-content .input-group textarea:focus {
+    border-color: #a0a0a0; /* Brighter blue on focus */
+    box-shadow: 0 0 12px rgba(180, 180, 180, 0.4);
+    background-color: #4b4b4b; /* Slightly lighter on focus */
+}
+
+.modal-content .radio-group label {
+  color: var(--modal-text-color);
+}
+.modal-content .radio-group input[type="radio"] {
+  accent-color: var(--modal-input-border); /* Use a blue accent for radio */
+}
+
+.modal-content .button-group button {
+  background-color: var(--modal-button-bg);
+  color: var(--modal-text-color);
+}
+
+.modal-content .button-group button:hover {
+  background-color: var(--modal-button-hover-bg);
+}
+
+.close-button {
+  color: #bbb; /* Lighter color */
+  position: absolute;
+  top: 15px; /* Adjusted position */
+  right: 25px; /* Adjusted position */
+  font-size: 36px; /* Larger close button */
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: var(--modal-text-color); /* Match modal text color on hover */
+  text-decoration: none;
+  transform: scale(1.1);
+}
+
+/* Specific styling for expedition report output */
+#expeditionReportContainer {
+  background-color: rgba(255, 255, 255, 0.08); /* Slightly more opaque light background for readability */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 25px;
+  margin-top: 35px;
+  border-radius: 10px;
+  color: var(--modal-text-color);
+  font-family: 'Roboto Mono', monospace;
+  line-height: 1.7;
+  white-space: pre-line; /* Keep line breaks */
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+  font-size: 0.9em;
+}
+#expeditionReportContainer h3 {
+  color: var(--modal-header-color); /* Consistent header color */
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  text-align: left; /* Align report title to left */
+  letter-spacing: 1px;
+}
+#expeditionReportContainer p {
+  margin-bottom: 1.2em; /* Space out paragraphs */
+  text-align: left;
+}
+
+/* New: Small button style for "Add Relation" and "Remove" */
+.small-button {
+  padding: 8px 15px; /* Smaller padding */
+  font-size: 0.9em; /* Smaller font */
+  margin-top: 15px; /* Space above the button */
+  background-color: #5a5a5a; /* Slightly different color */
+}
+
+.small-button:hover {
+  background-color: #7a7a7a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.relations-container {
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.relation-row {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.relation-row:last-child {
+  margin-bottom: 0; /* No margin for the last row */
+}
+
+.relation-row select {
+  flex: 1; /* Allow selects to grow */
+  min-width: 150px; /* Minimum width for selects */
+}
+
+.relation-row button.remove-relation-btn {
+  background-color: var(--delete-button-bg);
+  padding: 6px 12px;
+  font-size: 0.8em;
+  border-radius: 6px;
+  margin-top: 0; /* Override default button margin-top */
+}
+
+.relation-row button.remove-relation-btn:hover {
+  background-color: var(--delete-button-hover-bg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    letter-spacing: 1.5px;
+  }
+  h2, h3 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+  }
+  .container {
+    width: 95%;
+    padding: 0;
+  }
+
+  .card {
+    padding: 30px;
+    margin-bottom: 40px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  button {
+    width: 100%;
+    text-align: center;
+    padding: 14px 25px;
+    font-size: 1em;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+  .input-group label {
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+  .input-group input[type="text"],
+  .input-group select,
+  .input-group textarea {
+    font-size: 0.95em;
+    padding: 12px;
+  }
+
+  .radio-group {
+    flex-direction: column; /* Stack radio buttons vertically on small screens */
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .radio-group label {
+    margin-bottom: 0px;
+  }
+
+  .saved-list li {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+  }
+
+  .saved-item-info {
+      margin-right: 0;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+  }
+
+  .saved-item-buttons {
+      width: 100%;
+      justify-content: space-around;
+      gap: 5px;
+  }
+
+  .saved-item-buttons button {
+      flex-grow: 1;
+      font-size: 0.85em;
+      padding: 6px 10px;
+  }
+
+  .expeditions-button {
+    position: static; /* Make it static on small screens */
+    margin: 25px auto 40px auto; /* Center it below the top messages */
+    width: 90%;
+    max-width: 350px;
+    display: block;
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+
+  .new-game-button {
+    margin-bottom: 20px; /* Adjust margin for mobile */
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+
+  .scp-generator-button {
+    margin-bottom: 20px; /* Adjust margin for mobile */
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 20px auto;
+    padding: 30px;
+  }
+
+  .modal-content h2 {
+    font-size: 2em;
+    margin-bottom: 25px;
+  }
+
+  .close-button {
+    font-size: 32px;
+    top: 10px;
+    right: 18px;
+  }
+
+  .modal-content .radio-group {
+    flex-direction: column; /* Stack radio buttons vertically on small screens */
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .modal-content .radio-group label {
+    margin-bottom: 0px;
+  }
+
+  #expeditionReportContainer {
+    padding: 20px;
+    font-size: 0.85em;
+  }
+  #expeditionReportContainer h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+  }
+
+  /* Responsive adjustments for new elements */
+  .relations-container {
+    padding: 10px;
+  }
+  .relation-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .relation-row select {
+    width: 100%; /* Full width on small screens */
+    min-width: unset;
+  }
+  .relation-row button.remove-relation-btn {
+    width: 100%;
+    margin-top: 0;
+  }
+  .small-button {
+    width: 100%;
+    text-align: center;
+    padding: 10px 20px;
+  }
+}
+
+.level-creator.card::after,
+.entity-generator.card::after,
+.sublevel-generator.card::after,
+.saved-items.card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 0.5px, transparent 0.5px, transparent 2px);
+  mix-blend-mode: overlay; opacity: .6; animation: scanline-glitch 6s linear infinite;
+  z-index: -1; /* place scanlines behind card content */
+}
+
+.level-creator.card, .entity-generator.card, .sublevel-generator.card, .saved-items.card { border: 2px solid #ffea00; box-shadow: 0 0 12px rgba(255,234,0,.6), 0 0 28px rgba(255,234,0,.35); }
+.level-creator .input-group input, .level-creator .input-group textarea, .level-creator .input-group select, .entity-generator .input-group input, .entity-generator .input-group textarea, .entity-generator .input-group select, .sublevel-generator .input-group input, .sublevel-generator .input-group textarea, .sublevel-generator .input-group select { border-color: #ffea00; box-shadow: 0 0 6px rgba(255,234,0,.3) inset, 0 0 6px rgba(255,234,0,.25); }
+.level-creator .input-group input:focus, .level-creator .input-group textarea:focus, .level-creator .input-group select:focus, .entity-generator .input-group input:focus, .entity-generator .input-group textarea:focus, .entity-generator .input-group select:focus, .sublevel-generator .input-group input:focus, .sublevel-generator .input-group textarea:focus, .sublevel-generator .input-group select:focus { border-color: #fff176; box-shadow: 0 0 12px rgba(255,234,0,.85), 0 0 24px rgba(255,234,0,.5); }
+.level-creator .input-group input[type="radio"] {
+  border-color: #ffea00; /* keep neon theme specifically for radios */
+  box-shadow: 0 0 8px rgba(255,234,0,.6), 0 0 18px rgba(255,234,0,.35);
+}
+
+.level-creator.card::before,
+.entity-generator.card::before,
+.sublevel-generator.card::before,
+.saved-items.card::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 0.8px, transparent 0.8px, transparent 2.8px);
+  mix-blend-mode: overlay; opacity: .35; animation: scanline-glitch 18s linear infinite; z-index: -1;
+}

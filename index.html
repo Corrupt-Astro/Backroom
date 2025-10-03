@@ -1,0 +1,517 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backrooms Level Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <button id="expeditionsBtn" class="expeditions-button">Expeditions</button>
+  <div class="container">
+    <img src="/backroomlogo1.png" alt="Backrooms logo" class="site-logo">
+    <h1>Backrooms Level Generator</h1>
+    <p class="subtitle">You've been here before.</p>
+    <div class="level-creator card">
+      <h2>Level Details</h2>
+      <div class="input-group">
+        <label for="levelNumber">Level Number:</label>
+        <input type="text" id="levelNumber" placeholder="e.g., Level 0">
+      </div>
+
+      <div class="input-group">
+        <label for="levelClass">Class:</label>
+        <select id="levelClass">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="Habitable">Habitable</option>
+          <option value="Deadzone">Deadzone</option>
+          <option value="Variable">Variable</option>
+          <option value="Undetermined">Undetermined</option>
+          <option value="Pending">Pending</option>
+          <option value="N/A">N/A</option>
+          <option value="Omega">Omega</option>
+          <option value="Amended">Amended</option>
+          <option value="1e - Environmental">1e - Environmental</option>
+          <option value="2e - Environmental">2e - Environmental</option>
+          <option value="3e - Environmental">3e - Environmental</option>
+          <option value="4e - Environmental">4e - Environmental</option>
+          <option value="5e - Environmental">5e - Environmental</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div class="input-group" id="customClassGroup" style="display:none;">
+        <label for="customClassName">Class Name:</label>
+        <input type="text" id="customClassName" placeholder="e.g., Unstable Habitat">
+      </div>
+
+      <div class="input-group">
+        <label>Safety:</label>
+        <div class="radio-group">
+          <input type="radio" id="safe" name="safety" value="Safe" checked>
+          <label for="safe">Safe</label>
+          <input type="radio" id="unsafe" name="safety" value="Unsafe">
+          <label for="unsafe">Unsafe</label>
+          <input type="radio" id="safetyCustom" name="safety" value="Custom">
+          <label for="safetyCustom">Custom</label>
+        </div>
+      </div>
+      <div class="input-group" id="customSafetyGroup" style="display:none;">
+        <label for="customSafetyName">Safety Designation:</label>
+        <input type="text" id="customSafetyName" placeholder="e.g., Conditionally Safe">
+      </div>
+
+      <div class="input-group">
+        <label>Security:</label>
+        <div class="radio-group">
+          <input type="radio" id="secure" name="security" value="Secure" checked>
+          <label for="secure">Secure</label>
+          <input type="radio" id="unsecure" name="security" value="Unsecure">
+          <label for="unsecure">Unsecure</label>
+          <input type="radio" id="securityCustom" name="security" value="Custom">
+          <label for="securityCustom">Custom</label>
+        </div>
+      </div>
+      <div class="input-group" id="customSecurityGroup" style="display:none;">
+        <label for="customSecurityName">Security Designation:</label>
+        <input type="text" id="customSecurityName" placeholder="e.g., Contested">
+      </div>
+
+      <div class="input-group">
+        <label for="entityCount">Entity Count:</label>
+        <select id="entityCount">
+          <option value="Devoid of entities">Devoid of entities</option>
+          <option value="Minimal entity count">Minimal entity count</option>
+          <option value="Low entity count">Low entity count</option>
+          <option value="Medium entity count">Medium entity count</option>
+          <option value="Entity infestation">Entity infestation</option>
+          <option value="Undocumented!">Undocumented! Entities</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div class="input-group" id="customEntityCountGroup" style="display:none;">
+        <label for="customEntityCount">Describe Entity Count:</label>
+        <input type="text" id="customEntityCount" placeholder="e.g., Sporadic, wave-like migrations">
+      </div>
+
+      <div class="input-group">
+        <label for="characteristics">Characteristics:</label>
+        <textarea id="characteristics" placeholder="Describe the level's general characteristics."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="phenomena">Phenomena:</label>
+        <textarea id="phenomena" placeholder="Unusual or paranormal events."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="objects">Objects:</label>
+        <textarea id="objects" placeholder="Notable objects found within the level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="structures">Structures:</label>
+        <textarea id="structures" placeholder="Describe any notable buildings, bases, or formations within the level."></textarea>
+      </div>
+      <div class="input-group">
+        <label for="colonies">Colonies & Outposts:</label>
+        <textarea id="colonies" placeholder="Describe any known colonies, outposts, or settlements operating in this level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="entities">Entities:</label>
+        <textarea id="entities" placeholder="Entities inhabiting this level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="entrances">Entrances:</label>
+        <textarea id="entrances" placeholder="How to enter this level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="exits">Exits:</label>
+        <textarea id="exits" placeholder="How to exit this level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label>Extra Inputs:</label>
+        <div class="button-group">
+          <button id="survivalGuideToggle" type="button">Survival Guide</button>
+          <button id="foundFootagesToggle" type="button">Found Footage</button>
+          <button id="foundNotesToggle" type="button">Found Notes/Logs</button>
+          <button id="theoriesToggle" type="button">Theories</button>
+          <button id="incidentReportsToggle" type="button">Incident Reports</button>
+          <button id="revisionsToggle" type="button">Revisions</button>
+          <button id="addendumToggle" type="button">Addendum</button>
+          <button id="explorerReportsToggle" type="button">Explorer Reports</button>
+          <button id="testLogsToggle" type="button">Test Logs</button>
+          <button id="interviewsToggle" type="button">Interviews</button>
+          <button id="discoveryToggle" type="button">Discovery</button>
+          <button id="archivedDocsToggle" type="button">Archived Documents</button>
+          <button id="audioTranscriptsToggle" type="button">Audio Transcripts</button>
+          <button id="timelineToggle" type="button">Timeline</button>
+        </div>
+      </div>
+      <div class="input-group" id="survivalGuideGroup" style="display:none;">
+        <label for="survivalGuideText">Survival Guide:</label>
+        <textarea id="survivalGuideText" placeholder="Tips, procedures, and survival guidance for this level."></textarea>
+      </div>
+      <div class="input-group" id="foundFootagesGroup" style="display:none;">
+        <label for="foundFootagesText">Found Footage:</label>
+        <textarea id="foundFootagesText" placeholder="Describe recovered video/audio snippets relevant to this level."></textarea>
+      </div>
+      <div class="input-group" id="foundNotesGroup" style="display:none;">
+        <label for="foundNotesText">Found Notes/Logs:</label>
+        <textarea id="foundNotesText" placeholder="Recovered notes, logs, or personal accounts tied to this level."></textarea>
+      </div>
+      <div class="input-group" id="theoriesGroup" style="display:none;">
+        <label for="theoriesText">Theories:</label>
+        <textarea id="theoriesText" placeholder="Speculative theories about this level, its phenomena, origins, or connections."></textarea>
+      </div>
+      <div class="input-group" id="incidentReportsGroup" style="display:none;">
+        <label for="incidentReportsText">Incident Reports:</label>
+        <textarea id="incidentReportsText" placeholder="Document specific incidents, dates, outcomes, and notes related to this level."></textarea>
+      </div>
+      <div class="input-group" id="revisionsGroup" style="display:none;">
+        <label for="revisionsText">Revisions:</label>
+        <textarea id="revisionsText" placeholder="Versioned changes, updates, and amendments to this level's documentation."></textarea>
+      </div>
+      <div class="input-group" id="addendumGroup" style="display:none;">
+        <label for="addendumText">Addendum:</label>
+        <textarea id="addendumText" placeholder="Additional notes, amendments, or post-publication updates."></textarea>
+      </div>
+      <div class="input-group" id="explorerReportsGroup" style="display:none;">
+        <label for="explorerReportsText">Explorer Reports:</label>
+        <textarea id="explorerReportsText" placeholder="Field reports from explorers or teams."></textarea>
+      </div>
+      <div class="input-group" id="testLogsGroup" style="display:none;">
+        <label for="testLogsText">Test Logs:</label>
+        <textarea id="testLogsText" placeholder="Recorded experiments and results."></textarea>
+      </div>
+      <div class="input-group" id="interviewsGroup" style="display:none;">
+        <label for="interviewsText">Interviews:</label>
+        <textarea id="interviewsText" placeholder="Interview transcripts with witnesses or experts."></textarea>
+      </div>
+      <div class="input-group" id="discoveryGroup" style="display:none;">
+        <label for="discoveryText">Discovery:</label>
+        <textarea id="discoveryText" placeholder="Detailed account of the level's initial discovery."></textarea>
+      </div>
+      <div class="input-group" id="archivedDocsGroup" style="display:none;">
+        <label for="archivedDocsText">Archived Documents:</label>
+        <textarea id="archivedDocsText" placeholder="Recovered or declassified documents."></textarea>
+      </div>
+      <div class="input-group" id="audioTranscriptsGroup" style="display:none;">
+        <label for="audioTranscriptsText">Audio Transcripts:</label>
+        <textarea id="audioTranscriptsText" placeholder="Transcripts of recovered audio."></textarea>
+      </div>
+      <div class="input-group" id="timelineGroup" style="display:none;">
+        <label for="timelineText">Timeline:</label>
+        <textarea id="timelineText" placeholder="Chronological events and updates related to this level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="wordCount">Text Length:</label>
+        <select id="wordCount">
+          <option value="~100 words">~100 words</option>
+          <option value="~300 words" selected>~300 words</option>
+          <option value="~500 words">~500 words</option>
+          <option value="~1000 words">~1000 words</option>
+          <option value="~2000 words">~2000 words</option>
+          <option value="~5000 words">~5000 words</option>
+          <option value="~7500 words">~7500 words</option>
+          <option value="~10000 words">~10000 words</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="levelImageStyle">Image Style:</label>
+        <select id="levelImageStyle">
+          <option value="realistic" selected>Realistic</option>
+          <option value="anime">Anime</option>
+          <option value="retro">Retro (Pixelized)</option>
+          <option value="random">Random</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="writingStyle">Writing Style:</label>
+        <select id="writingStyle">
+          <option value="Clinical (Standard)" selected>Clinical (Standard)</option>
+          <option value="Informal/Personal">Informal/Personal</option>
+          <option value="Narrative">Narrative</option>
+          <option value="Corrupted/Fragmented">Corrupted/Fragmented</option>
+          <option value="Techinical/Scientific">Techinical/Scientific</option>
+          <option value="Satirical/Joke Level">Satirical/Joke Level</option>
+          <option value="Cryptid/Mysterious">Cryptid/Mysterious</option>
+          <option value="Journal Entry">Journal Entry</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div class="input-group" id="customWritingStyleGroup" style="display:none;">
+        <label for="customWritingStyleName">Custom Style Name:</label>
+        <input type="text" id="customWritingStyleName" placeholder="e.g., Archivist's Whisper">
+        <label for="customWritingStyleInstructions" style="margin-top:12px;">Style Instructions/Tones:</label>
+        <textarea id="customWritingStyleInstructions" placeholder="Describe tone, formatting rules, perspective, constraints, etc."></textarea>
+      </div>
+
+      <div class="button-group">
+        <button id="generateImageBtn">Generate Level Image</button>
+        <button id="generateTextBtn" >Generate Text</button>
+        <button id="saveLevelBtn">Save Level</button>
+      </div>
+
+      <div id="imageContainer" class="output-container">
+        <!-- Image will be displayed here -->
+      </div>
+      <div id="textDescriptionContainer" class="output-container" style="display: none;">
+        <!-- Text description will be displayed here -->
+      </div>
+    </div>
+
+    <div class="entity-generator card collapsed" style="margin-top: 40px;">
+        <h2>Entity Generator</h2>
+        <button id="entityToggleBtn" type="button" class="collapse-toggle">Expand</button>
+        <div class="input-group">
+            <label for="entityName">Name:</label>
+            <input type="text" id="entityName" placeholder="e.g., The Wanderer">
+        </div>
+        <div class="input-group">
+            <label for="entityHabitatsSelect">Habitat(s):</label>
+            <select id="entityHabitatsSelect" multiple size="5"></select>
+        </div>
+        <div class="input-group" id="entityHabitatManualGroup" style="display:none;">
+            <label for="entityHabitatManual">Manual Habitat Info:</label>
+            <textarea id="entityHabitatManual" placeholder="Describe the entity's habitat(s)."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityDanger">Danger Level:</label>
+            <select id="entityDanger">
+              <option value="Safe (Passive, harmless)">Safe (Passive, harmless)</option>
+              <option value="Low (Minor threat, avoidable)">Low (Minor threat, avoidable)</option>
+              <option value="Medium (Significant threat, requires caution)">Medium (Significant threat, requires caution)</option>
+              <option value="High (Deadly, extremely dangerous)">High (Deadly, extremely dangerous)</option>
+              <option value="Unknown (Highly unpredictable or mysterious)">Unknown (Highly unpredictable or mysterious)</option>
+            </select>
+        </div>
+
+        <!-- New: Entity Linking Section -->
+        <div class="input-group">
+          <label>Linked Entities:</label>
+          <div id="entityRelationsContainer" class="relations-container">
+            <!-- Dynamic relation rows will be added here -->
+          </div>
+          <button id="addRelationBtn" type="button" class="small-button">Add New Relation</button>
+        </div>
+
+        <div class="input-group">
+            <label for="entityDescription">Description:</label>
+            <textarea id="entityDescription" placeholder="Describe the entity overall, it's appearence, powers, etc."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityBehaviors">Behaviors:</label>
+            <textarea id="entityBehaviors" placeholder="How the entity acts and behaves."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityBiology">Biology:</label>
+            <textarea id="entityBiology" placeholder="In-depth physical description and biology."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityDiscovery">Discovery:</label>
+            <textarea id="entityDiscovery" placeholder="How and where it was discovered."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityAdditional">Additional Info:</label>
+            <textarea id="entityAdditional" placeholder="Any extra notes about the entity."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityDosDonts">Do and Don'ts:</label>
+            <textarea id="entityDosDonts" placeholder="Guidelines for encounters (do's and don'ts)."></textarea>
+        </div>
+
+        <div class="input-group">
+          <label for="entityImageStyle">Image Style:</label>
+          <select id="entityImageStyle">
+            <option value="realistic" selected>Realistic</option>
+            <option value="anime">Anime</option>
+            <option value="retro">Retro (Pixelized)</option>
+            <option value="random">Random</option>
+            <option value="lab-test">Clinical Lab Test (Scientists)</option>
+          </select>
+        </div>
+
+        <div class="button-group">
+            <button id="generateEntityTextBtn">Generate Entity Description</button>
+            <button id="generateEntityImageBtn">Generate Entity Image</button>
+            <button id="saveEntityBtn">Save Entity</button>
+        </div>
+        <div id="entityDescriptionContainer" class="output-container" style="display: none;">
+            <!-- Entity description will be displayed here -->
+        </div>
+        <div id="entityImageContainer" class="output-container" style="display: none;">
+            <!-- Entity image will be displayed here -->
+        </div>
+    </div>
+
+    <div class="sublevel-generator card collapsed" style="margin-top: 40px;">
+        <h2>Sub-Level Generator</h2>
+        <button id="sublevelToggleBtn" type="button" class="collapse-toggle">Expand</button>
+        <div class="input-group">
+            <label for="parentLevelSelector">Select Parent Level:</label>
+            <select id="parentLevelSelector">
+                <!-- Options will be populated by JavaScript -->
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="sublevelDifferences">Differences from Main Level:</label>
+            <textarea id="sublevelDifferences" placeholder="How does this sub-level differ from the selected main level?"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelResemblance">Resemblance to Main Level:</label>
+            <textarea id="sublevelResemblance" placeholder="What aspects of the main level does this sub-level retain?"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelDescription">Sub-Level Description:</label>
+            <textarea id="sublevelDescription" placeholder="Describe the specific environment and atmosphere of this sub-level."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelEntities">Entities:</label>
+            <textarea id="sublevelEntities" placeholder="Entities specific to this sub-level."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelResources">Resources:</label>
+            <textarea id="sublevelResources" placeholder="Resources or supplies found within this sub-level."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelStructures">Structures:</label>
+            <textarea id="sublevelStructures" placeholder="Describe any notable buildings, bases, or formations specific to this sub-level."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelEntrances">Entrances:</label>
+        <textarea id="sublevelEntrances" placeholder="How to enter this sub-level."></textarea>
+      </div>
+      <div class="input-group">
+        <label for="sublevelExits">Exits:</label>
+        <textarea id="sublevelExits" placeholder="How to exit this sub-level."></textarea>
+      </div>
+      <div class="input-group">
+        <label for="sublevelNumber">Sub-Level Number:</label>
+        <input type="text" id="sublevelNumber" placeholder="e.g., 0.11, 2.5">
+      </div>
+      <div class="input-group">
+        <label for="sublevelImageStyle">Image Style:</label>
+        <select id="sublevelImageStyle">
+          <option value="realistic" selected>Realistic</option>
+          <option value="anime">Anime</option>
+          <option value="retro">Retro (Pixelized)</option>
+          <option value="random">Random</option>
+        </select>
+      </div>
+      <div class="button-group">
+            <button id="generateSubLevelTextBtn">Generate Sub-Level Text</button>
+            <button id="generateSubLevelImageBtn">Generate Sub-Level Image</button>
+            <button id="saveSubLevelBtn">Save Sub-Level</button>
+        </div>
+        <div id="subLevelDescriptionContainer" class="output-container" style="display: none;">
+            <!-- Sub-Level description will be displayed here -->
+        </div>
+        <div id="subLevelImageContainer" class="output-container" style="display: none;">
+            <!-- Sub-Level image will be displayed here -->
+        </div>
+    </div>
+
+    <div class="saved-items card">
+        <h2>Saved Items</h2>
+        <div class="saved-levels-section">
+            <h3>Levels (<span id="savedLevelsCount">0</span>/55)</h3>
+            <div class="saved-tools">
+              <button id="exportLevelsJsonBtn" type="button" class="small-button">Export Levels (JSON)</button>
+              <button id="exportLevelsTxtBtn" type="button" class="small-button">Export Levels (TXT)</button>
+              <button id="importLevelsBtn" type="button" class="small-button">Import Levels (JSON/TXT)</button>
+              <input id="importLevelsFile" type="file" accept=".json,.txt" style="display:none">
+            </div>
+            <ul id="savedLevelsList" class="saved-list">
+                <!-- Saved levels will be listed here -->
+            </ul>
+        </div>
+        <div class="saved-entities-section" style="margin-top: 30px;">
+            <h3>Entities (<span id="savedEntitiesCount">0</span>/75)</h3>
+            <div class="saved-tools">
+              <button id="exportEntitiesJsonBtn" type="button" class="small-button">Export Entities (JSON)</button>
+              <button id="exportEntitiesTxtBtn" type="button" class="small-button">Export Entities (TXT)</button>
+              <button id="importEntitiesBtn" type="button" class="small-button">Import Entities (JSON/TXT)</button>
+              <input id="importEntitiesFile" type="file" accept=".json,.txt" style="display:none">
+            </div>
+            <ul id="savedEntitiesList" class="saved-list">
+                <!-- Saved entities will be listed here -->
+            </ul>
+        </div>
+        <div class="saved-sublevels-section" style="margin-top: 30px;">
+            <h3>Sub-Levels (<span id="savedSubLevelsCount">0</span>/65)</h3>
+            <div class="saved-tools">
+              <button id="exportSubLevelsJsonBtn" type="button" class="small-button">Export Sub-Levels (JSON)</button>
+              <button id="exportSubLevelsTxtBtn" type="button" class="small-button">Export Sub-Levels (TXT)</button>
+              <button id="importSubLevelsBtn" type="button" class="small-button">Import Sub-Levels (JSON/TXT)</button>
+              <input id="importSubLevelsFile" type="file" accept=".json,.txt" style="display:none">
+            </div>
+            <ul id="savedSubLevelsList" class="saved-list">
+                <!-- Saved sub-levels will be listed here -->
+            </ul>
+        </div>
+    </div>
+
+  <!-- Expedition Modal -->
+  <div id="expeditionModal" class="modal">
+    <div class="modal-content card">
+      <span class="close-button">&times;</span>
+      <h2>Start an Expedition</h2>
+      <div class="input-group">
+        <label for="expeditionTypeSelect">Choose Expedition Type:</label>
+        <select id="expeditionTypeSelect">
+          <option value="">Select Type</option>
+          <option value="level">Level</option>
+          <option value="sublevel">Sub-Level</option>
+          <option value="entity">Entity</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="expeditionTargetSelect">Select Target:</label>
+        <select id="expeditionTargetSelect" disabled>
+          <option value="">Select a Type First</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Expedition Character:</label>
+        <div class="radio-group">
+          <input type="radio" id="scientist" name="expeditionCharacter" value="Scientist" checked>
+          <label for="scientist">Scientist</label>
+          <input type="radio" id="wanderer" name="expeditionCharacter" value="Wanderer">
+          <label for="wanderer">Wanderer</label>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Character Gender:</label>
+        <div class="radio-group">
+          <input type="radio" id="genderMale" name="characterGender" value="male" checked>
+          <label for="genderMale">Male</label>
+          <input type="radio" id="genderFemale" name="characterGender" value="female">
+          <label for="genderFemale">Female</label>
+          <input type="radio" id="genderOther" name="characterGender" value="non-binary/other">
+          <label for="genderOther">Non-binary/Other</label>
+        </div>
+      </div>
+      <div class="button-group">
+        <button id="startExpeditionBtn">Start Expedition</button>
+      </div>
+      <div id="expeditionReportContainer" class="output-container" style="display: none;">
+        <!-- Expedition report will be displayed here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
