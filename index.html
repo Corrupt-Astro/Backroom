@@ -1,17 +1,513 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Backrooms Level Generator</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Backrooms Level Generator (GitHub Version)</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---------------------------------------------------------------------- */
+    /* START OF style.css CONTENT (MODIFIED) */
+    /* ---------------------------------------------------------------------- */
+    :root {
+      --bg-color: #1a1a1a; /* Very dark grey, almost black */
+      --card-color: rgba(30, 30, 30, 0.9); /* Slightly less transparent */
+      --text-color: #e0e0e0; /* Off-white for general text */
+      --header-color: #f0f0f0; /* Brighter off-white for headers */
+      --input-bg: #2b2b2b; /* Dark grey for input background */
+      --input-border: #555; /* Medium grey for input border */
+      --button-bg: #4a4a4a; /* Darker grey for general buttons */
+      --button-hover-bg: #6a6a6a; /* Lighter grey on hover */
+      --output-bg: rgba(40, 40, 40, 0.8); /* Slightly less transparent output */
+      --border-radius: 12px; /* Slightly larger border radius */
+      --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9); /* More prominent, darker shadow */
+      --save-button-bg: #28a745; /* Green */
+      --save-button-hover-bg: #218838;
+      --load-button-bg: #007bff; /* Blue */
+      --load-button-hover-bg: #0056b3;
+      --delete-button-bg: #dc3545; /* Red */
+      --delete-button-hover-bg: #c82333;
+
+      /* New: Modal Specific Colors */
+      --modal-bg-color: #2a2a2a; /* Darker grey for modal background */
+      --modal-text-color: #f0f0f0; /* Light text for modal */
+      --modal-header-color: #fff; /* White for modal headers */
+      --modal-input-bg: #3a3a3a; /* Slightly lighter blue for modal inputs */
+      --modal-input-border: #666; /* Blue border for modal inputs */
+      --modal-button-bg: #007bff; /* Blue button for modal */
+      --modal-button-hover-bg: #0056b3; /* Darker blue on hover */
+
+      --game-button-bg: #e7a51c; /* Orange/Gold for new game button */
+      --game-button-hover-bg: #c98e15;
+
+      --scp-button-bg: #8c0000; /* Dark red for SCP button */
+      --scp-button-hover-bg: #6b0000;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      /* Removed: background-image: url('/img-2025-02-25-14-08-54.png'); */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--text-color);
+      padding: 40px 0;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Darker overlay */
+      z-index: -1;
+    }
+
+    .site-logo {
+      display: block;
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto 24px auto;
+      filter: brightness(1) contrast(1.1);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 5px;
+        color: var(--header-color);
+        font-family: 'Roboto Mono', monospace;
+    }
+
+    .subtitle {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-style: italic;
+        color: #aaaaaa;
+    }
+
+    .container {
+      background-color: transparent;
+      padding: 0;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 1100px;
+      box-shadow: none;
+    }
+
+    .card {
+      background-color: var(--card-color);
+      border-radius: var(--border-radius);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--box-shadow);
+      backdrop-filter: blur(5px);
+    }
+
+    .level-creator h2, .saved-items h2, .entity-generator h2, .sublevel-generator h2 {
+      border-bottom: 2px solid var(--input-border);
+      padding-bottom: 10px;
+      margin-top: 0;
+      color: var(--header-color);
+      font-family: 'Roboto Mono', monospace;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--text-color);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="number"],
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-group input[type="text"]:focus,
+    .input-group input[type="number"]:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      border-color: #a0a0a0;
+      outline: none;
+    }
+
+    .input-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .radio-group, .select-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+
+    .radio-group label {
+      padding: 8px 15px;
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: var(--input-bg);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      font-weight: normal;
+      text-transform: none;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .radio-group input[type="radio"]:checked + label {
+      background-color: var(--load-button-bg); /* Use blue for selected */
+      border-color: var(--load-button-bg);
+      color: white;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .button-group button, .card > button, .relation-row button, .expeditions-button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: var(--button-bg);
+      color: var(--text-color);
+      font-weight: bold;
+      font-family: 'Roboto Mono', monospace;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .button-group button:hover, .card > button:hover, .relation-row button:hover, .expeditions-button:hover {
+      background-color: var(--button-hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    button#generateTextBtn,
+    button#generateImageBtn,
+    button#generateEntityTextBtn,
+    button#generateEntityImageBtn,
+    button#generateSubLevelTextBtn,
+    button#generateSubLevelImageBtn {
+        background-color: #8c0000; /* Darker red/maroon for generation buttons */
+        color: white;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    button#generateTextBtn:hover,
+    button#generateImageBtn:hover,
+    button#generateEntityTextBtn:hover,
+    button#generateEntityImageBtn:hover,
+    button#generateSubLevelTextBtn:hover,
+    button#generateSubLevelImageBtn:hover {
+        background-color: #6b0000;
+    }
+
+    button#saveLevelBtn, button#saveEntityBtn, button#saveSubLevelBtn {
+      background-color: var(--save-button-bg);
+      color: white;
+    }
+
+    button#saveLevelBtn:hover, button#saveEntityBtn:hover, button#saveSubLevelBtn:hover {
+      background-color: var(--save-button-hover-bg);
+    }
+
+    .output-container {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      background-color: var(--output-bg);
+      font-family: 'Roboto Mono', monospace;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .output-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 6px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Saved Items Section Styling */
+    .saved-items {
+      margin-top: 60px;
+    }
+
+    .saved-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .saved-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: background-color 0.3s ease;
+    }
+
+    .saved-list li:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .saved-item-info {
+        flex-grow: 1;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 15px;
+    }
+
+    .saved-item-buttons button {
+      padding: 8px 15px;
+      font-size: 14px;
+      margin-left: 10px;
+      font-weight: normal;
+    }
+
+    .load-btn {
+      background-color: var(--load-button-bg);
+      color: white;
+    }
+
+    .load-btn:hover {
+      background-color: var(--load-button-hover-bg);
+    }
+
+    .delete-btn {
+      background-color: var(--delete-button-bg);
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: var(--delete-button-hover-bg);
+    }
+
+    /* Toggles for optional sections */
+    .section-toggle {
+        padding: 8px 15px;
+        border: 1px solid var(--input-border);
+        background-color: var(--button-bg);
+        color: var(--text-color);
+        font-weight: normal;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        border-radius: 6px;
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    .section-toggle[data-active="true"] {
+        background-color: var(--save-button-bg);
+        border-color: var(--save-button-bg);
+        color: white;
+    }
+
+    .optional-section-group {
+        border-left: 3px solid var(--input-border);
+        padding-left: 15px;
+        margin-top: 20px;
+    }
+
+    /* Modal Styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.8);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background-color: var(--modal-bg-color);
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 12px;
+        width: 80%;
+        max-width: 700px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        color: var(--modal-text-color);
+        position: relative;
+    }
+
+    .modal-content h2 {
+        color: var(--modal-header-color);
+        border-bottom: 2px solid var(--modal-input-border);
+        padding-bottom: 10px;
+    }
+
+    .modal-content input[type="text"], .modal-content select {
+        background-color: var(--modal-input-bg);
+        border: 1px solid var(--modal-input-border);
+        color: var(--modal-text-color);
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        transition: color 0.3s;
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .relation-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .relation-row select {
+        flex: 1;
+    }
+
+    .small-button {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+        flex-shrink: 0;
+    }
+
+    .expeditions-button {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 50;
+        background-color: var(--game-button-bg);
+        color: black;
+    }
+
+    .expeditions-button:hover {
+        background-color: var(--game-button-hover-bg);
+    }
+
+    /* Style for sections that hold their own textareas */
+    #addendumGroup textarea, #explorerReportsGroup textarea, #testLogsGroup textarea, 
+    #interviewsGroup textarea, #discoveryGroup textarea, #archivedDocsGroup textarea,
+    #audioTranscriptsGroup textarea, #timelineGroup textarea, #survivalGuideText textarea,
+    #foundFootagesText textarea, #foundNotesText textarea, #theoriesText textarea,
+    #incidentReportsText textarea, #revisionsText textarea {
+        min-height: 150px;
+    }
+
+    /* Sublevel/Entity Toggle Buttons */
+    .generator-toggle-group {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .generator-toggle {
+        padding: 15px 30px;
+        background-color: var(--button-bg);
+        color: var(--text-color);
+        border: 2px solid transparent;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        flex-grow: 1;
+        max-width: 400px;
+    }
+
+    .generator-toggle[data-active="true"] {
+        background-color: var(--scp-button-bg);
+        border-color: white;
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(140, 0, 0, 0.5);
+    }
+
+    .generator-toggle:hover {
+        transform: translateY(-3px);
+    }
+
+    .entity-generator, .sublevel-generator {
+        display: none;
+        margin-top: 30px;
+    }
+
+    .entity-generator.active, .sublevel-generator.active {
+        display: block;
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* END OF style.css CONTENT */
+    /* ---------------------------------------------------------------------- */
+  </style>
 </head>
 <body>
   <button id="expeditionsBtn" class="expeditions-button">Expeditions</button>
   <div class="container">
-    <img src="/backroomlogo1.png" alt="Backrooms logo" class="site-logo">
     <h1>Backrooms Level Generator</h1>
-    <p class="subtitle">You've been here before.</p>
+    <p class="subtitle">**WEBSIM API DISABLED: AI functionality has been replaced by static placeholders.**</p>
+
     <div class="level-creator card">
       <h2>Level Details</h2>
       <div class="input-group">
@@ -88,43 +584,40 @@
           <option value="Minimal entity count">Minimal entity count</option>
           <option value="Low entity count">Low entity count</option>
           <option value="Medium entity count">Medium entity count</option>
-          <option value="Entity infestation">Entity infestation</option>
-          <option value="Undocumented!">Undocumented! Entities</option>
+          <option value="High entity count">High entity count</option>
+          <option value="Extremely high entity count (Horde)">Extremely high entity count (Horde)</option>
+          <option value="Varies">Varies</option>
           <option value="Custom">Custom</option>
         </select>
       </div>
       <div class="input-group" id="customEntityCountGroup" style="display:none;">
-        <label for="customEntityCount">Describe Entity Count:</label>
-        <input type="text" id="customEntityCount" placeholder="e.g., Sporadic, wave-like migrations">
+        <label for="customEntityCount">Entity Count Description:</label>
+        <input type="text" id="customEntityCount" placeholder="e.g., Moderate to High">
       </div>
 
       <div class="input-group">
-        <label for="characteristics">Characteristics:</label>
-        <textarea id="characteristics" placeholder="Describe the level's general characteristics."></textarea>
+        <label for="characteristics">Characteristics & Features:</label>
+        <textarea id="characteristics" placeholder="Describe the physical makeup, architecture, and general feel of the level."></textarea>
       </div>
 
       <div class="input-group">
-        <label for="phenomena">Phenomena:</label>
-        <textarea id="phenomena" placeholder="Unusual or paranormal events."></textarea>
+        <label for="phenomena">Anomalous Phenomena:</label>
+        <textarea id="phenomena" placeholder="Describe any strange events, physics, or sensory effects (e.g., static, distorted sound, temporal loops)."></textarea>
       </div>
 
       <div class="input-group">
-        <label for="objects">Objects:</label>
-        <textarea id="objects" placeholder="Notable objects found within the level."></textarea>
-      </div>
-
-      <div class="input-group">
-        <label for="structures">Structures:</label>
-        <textarea id="structures" placeholder="Describe any notable buildings, bases, or formations within the level."></textarea>
-      </div>
-      <div class="input-group">
-        <label for="colonies">Colonies & Outposts:</label>
-        <textarea id="colonies" placeholder="Describe any known colonies, outposts, or settlements operating in this level."></textarea>
+        <label for="objects">Objects & Resources:</label>
+        <textarea id="objects" placeholder="Describe any notable non-entity items (e.g., Almond Water, specific furniture, supplies)."></textarea>
       </div>
 
       <div class="input-group">
         <label for="entities">Entities:</label>
-        <textarea id="entities" placeholder="Entities inhabiting this level."></textarea>
+        <textarea id="entities" placeholder="List and briefly describe any known entities inhabiting this level."></textarea>
+      </div>
+
+      <div class="input-group">
+        <label for="colonies">Colonies & Outposts:</label>
+        <textarea id="colonies" placeholder="Describe any human or friendly entity groups within this level."></textarea>
       </div>
 
       <div class="input-group">
@@ -138,380 +631,1662 @@
       </div>
 
       <div class="input-group">
-        <label>Extra Inputs:</label>
-        <div class="button-group">
-          <button id="survivalGuideToggle" type="button">Survival Guide</button>
-          <button id="foundFootagesToggle" type="button">Found Footage</button>
-          <button id="foundNotesToggle" type="button">Found Notes/Logs</button>
-          <button id="theoriesToggle" type="button">Theories</button>
-          <button id="incidentReportsToggle" type="button">Incident Reports</button>
-          <button id="revisionsToggle" type="button">Revisions</button>
-          <button id="addendumToggle" type="button">Addendum</button>
-          <button id="explorerReportsToggle" type="button">Explorer Reports</button>
-          <button id="testLogsToggle" type="button">Test Logs</button>
-          <button id="interviewsToggle" type="button">Interviews</button>
-          <button id="discoveryToggle" type="button">Discovery</button>
-          <button id="archivedDocsToggle" type="button">Archived Documents</button>
-          <button id="audioTranscriptsToggle" type="button">Audio Transcripts</button>
-          <button id="timelineToggle" type="button">Timeline</button>
-        </div>
-      </div>
-      <div class="input-group" id="survivalGuideGroup" style="display:none;">
-        <label for="survivalGuideText">Survival Guide:</label>
-        <textarea id="survivalGuideText" placeholder="Tips, procedures, and survival guidance for this level."></textarea>
-      </div>
-      <div class="input-group" id="foundFootagesGroup" style="display:none;">
-        <label for="foundFootagesText">Found Footage:</label>
-        <textarea id="foundFootagesText" placeholder="Describe recovered video/audio snippets relevant to this level."></textarea>
-      </div>
-      <div class="input-group" id="foundNotesGroup" style="display:none;">
-        <label for="foundNotesText">Found Notes/Logs:</label>
-        <textarea id="foundNotesText" placeholder="Recovered notes, logs, or personal accounts tied to this level."></textarea>
-      </div>
-      <div class="input-group" id="theoriesGroup" style="display:none;">
-        <label for="theoriesText">Theories:</label>
-        <textarea id="theoriesText" placeholder="Speculative theories about this level, its phenomena, origins, or connections."></textarea>
-      </div>
-      <div class="input-group" id="incidentReportsGroup" style="display:none;">
-        <label for="incidentReportsText">Incident Reports:</label>
-        <textarea id="incidentReportsText" placeholder="Document specific incidents, dates, outcomes, and notes related to this level."></textarea>
-      </div>
-      <div class="input-group" id="revisionsGroup" style="display:none;">
-        <label for="revisionsText">Revisions:</label>
-        <textarea id="revisionsText" placeholder="Versioned changes, updates, and amendments to this level's documentation."></textarea>
-      </div>
-      <div class="input-group" id="addendumGroup" style="display:none;">
-        <label for="addendumText">Addendum:</label>
-        <textarea id="addendumText" placeholder="Additional notes, amendments, or post-publication updates."></textarea>
-      </div>
-      <div class="input-group" id="explorerReportsGroup" style="display:none;">
-        <label for="explorerReportsText">Explorer Reports:</label>
-        <textarea id="explorerReportsText" placeholder="Field reports from explorers or teams."></textarea>
-      </div>
-      <div class="input-group" id="testLogsGroup" style="display:none;">
-        <label for="testLogsText">Test Logs:</label>
-        <textarea id="testLogsText" placeholder="Recorded experiments and results."></textarea>
-      </div>
-      <div class="input-group" id="interviewsGroup" style="display:none;">
-        <label for="interviewsText">Interviews:</label>
-        <textarea id="interviewsText" placeholder="Interview transcripts with witnesses or experts."></textarea>
-      </div>
-      <div class="input-group" id="discoveryGroup" style="display:none;">
-        <label for="discoveryText">Discovery:</label>
-        <textarea id="discoveryText" placeholder="Detailed account of the level's initial discovery."></textarea>
-      </div>
-      <div class="input-group" id="archivedDocsGroup" style="display:none;">
-        <label for="archivedDocsText">Archived Documents:</label>
-        <textarea id="archivedDocsText" placeholder="Recovered or declassified documents."></textarea>
-      </div>
-      <div class="input-group" id="audioTranscriptsGroup" style="display:none;">
-        <label for="audioTranscriptsText">Audio Transcripts:</label>
-        <textarea id="audioTranscriptsText" placeholder="Transcripts of recovered audio."></textarea>
-      </div>
-      <div class="input-group" id="timelineGroup" style="display:none;">
-        <label for="timelineText">Timeline:</label>
-        <textarea id="timelineText" placeholder="Chronological events and updates related to this level."></textarea>
+        <label for="structures">In-Level Structures/Zones:</label>
+        <textarea id="structures" placeholder="List and briefly describe any distinct structures or zones within the level (e.g., 'The Quiet Room', 'The Flooded Basement')."></textarea>
       </div>
 
       <div class="input-group">
-        <label for="wordCount">Text Length:</label>
+        <label for="wordCount">Description Length:</label>
         <select id="wordCount">
-          <option value="~100 words">~100 words</option>
-          <option value="~300 words" selected>~300 words</option>
-          <option value="~500 words">~500 words</option>
-          <option value="~1000 words">~1000 words</option>
-          <option value="~2000 words">~2000 words</option>
-          <option value="~5000 words">~5000 words</option>
-          <option value="~7500 words">~7500 words</option>
-          <option value="~10000 words">~10000 words</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label for="levelImageStyle">Image Style:</label>
-        <select id="levelImageStyle">
-          <option value="realistic" selected>Realistic</option>
-          <option value="anime">Anime</option>
-          <option value="retro">Retro (Pixelized)</option>
-          <option value="random">Random</option>
+          <option value="100">~100 words</option>
+          <option value="200" selected>~200 words</option>
+          <option value="400">~400 words</option>
+          <option value="750">~750 words</option>
+          <option value="1500">~1500 words</option>
         </select>
       </div>
 
       <div class="input-group">
         <label for="writingStyle">Writing Style:</label>
         <select id="writingStyle">
-          <option value="Clinical (Standard)" selected>Clinical (Standard)</option>
-          <option value="Informal/Personal">Informal/Personal</option>
-          <option value="Narrative">Narrative</option>
-          <option value="Corrupted/Fragmented">Corrupted/Fragmented</option>
-          <option value="Techinical/Scientific">Techinical/Scientific</option>
-          <option value="Satirical/Joke Level">Satirical/Joke Level</option>
-          <option value="Cryptid/Mysterious">Cryptid/Mysterious</option>
-          <option value="Journal Entry">Journal Entry</option>
-          <option value="Custom">Custom</option>
+            <option value="Clinical (Standard)">Clinical (Standard)</option>
+            <option value="Explorer Report">Explorer Report (First-person, narrative)</option>
+            <option value="Poetic/Abstract">Poetic/Abstract</option>
+            <option value="Horror/Suspense">Horror/Suspense</option>
+            <option value="Informal Forum Post">Informal Forum Post</option>
+            <option value="Custom">Custom</option>
         </select>
       </div>
       <div class="input-group" id="customWritingStyleGroup" style="display:none;">
-        <label for="customWritingStyleName">Custom Style Name:</label>
-        <input type="text" id="customWritingStyleName" placeholder="e.g., Archivist's Whisper">
-        <label for="customWritingStyleInstructions" style="margin-top:12px;">Style Instructions/Tones:</label>
-        <textarea id="customWritingStyleInstructions" placeholder="Describe tone, formatting rules, perspective, constraints, etc."></textarea>
+          <label for="customWritingStyleName">Style Name (for saving):</label>
+          <input type="text" id="customWritingStyleName" placeholder="e.g., Old Memo Style">
+          <label for="customWritingStyleInstructions">Style Instructions (how should the text be written?):</label>
+          <textarea id="customWritingStyleInstructions" placeholder="e.g., Use formal but outdated language, include many typographical errors, and refer to entities as 'specters'."></textarea>
       </div>
 
-      <div class="button-group">
-        <button id="generateImageBtn">Generate Level Image</button>
-        <button id="generateTextBtn" >Generate Text</button>
+      <div class="input-group">
+        <label for="levelImageStyle">Image Style:</label>
+        <select id="levelImageStyle">
+          <option value="photorealistic">Photorealistic</option>
+          <option value="analog horror">Analog Horror (VHS style)</option>
+          <option value="liminal space art">Liminal Space Art</option>
+          <option value="1990s cctv">1990s CCTV footage</option>
+          <option value="anime">Anime/Cartoon style</option>
+          <option value="3d render">Stylized 3D render</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Extra Inputs:</label>
+        <div class="button-group">
+            <button id="survivalGuideToggle" type="button" class="section-toggle" data-active="false">Survival Guide</button>
+            <button id="foundFootagesToggle" type="button" class="section-toggle" data-active="false">Found Footage</button>
+            <button id="foundNotesToggle" type="button" class="section-toggle" data-active="false">Found Notes/Logs</button>
+            <button id="theoriesToggle" type="button" class="section-toggle" data-active="false">Theories</button>
+            <button id="incidentReportsToggle" type="button" class="section-toggle" data-active="false">Incident Reports</button>
+            <button id="revisionsToggle" type="button" class="section-toggle" data-active="false">Revisions</button>
+            <button id="addendumToggle" type="button" class="section-toggle" data-active="false">Addendum</button>
+            <button id="explorerReportsToggle" type="button" class="section-toggle" data-active="false">Explorer Reports</button>
+            <button id="testLogsToggle" type="button" class="section-toggle" data-active="false">Test Logs</button>
+            <button id="interviewsToggle" type="button" class="section-toggle" data-active="false">Interviews</button>
+            <button id="discoveryToggle" type="button" class="section-toggle" data-active="false">Discovery</button>
+            <button id="archivedDocsToggle" type="button" class="section-toggle" data-active="false">Archived Documents</button>
+            <button id="audioTranscriptsToggle" type="button" class="section-toggle" data-active="false">Audio Transcripts</button>
+            <button id="timelineToggle" type="button" class="section-toggle" data-active="false">Timeline</button>
+        </div>
+      </div>
+
+      <div id="survivalGuideText" class="optional-section-group" style="display: none;">
+          <label for="survivalGuideTextarea">Survival Guide Text:</label>
+          <textarea id="survivalGuideTextarea" placeholder="Enter survival guide text here."></textarea>
+      </div>
+      <div id="foundFootagesText" class="optional-section-group" style="display: none;">
+          <label for="foundFootagesTextarea">Found Footage Text (links/summaries):</label>
+          <textarea id="foundFootagesTextarea" placeholder="Enter details about found footage."></textarea>
+      </div>
+      <div id="foundNotesText" class="optional-section-group" style="display: none;">
+          <label for="foundNotesTextarea">Found Notes/Logs Text:</label>
+          <textarea id="foundNotesTextarea" placeholder="Enter text from found notes or logs."></textarea>
+      </div>
+      <div id="theoriesText" class="optional-section-group" style="display: none;">
+          <label for="theoriesTextarea">Theories Text:</label>
+          <textarea id="theoriesTextarea" placeholder="Enter theories about the level."></textarea>
+      </div>
+      <div id="incidentReportsText" class="optional-section-group" style="display: none;">
+          <label for="incidentReportsTextarea">Incident Reports Text:</label>
+          <textarea id="incidentReportsTextarea" placeholder="Enter incident report details."></textarea>
+      </div>
+      <div id="revisionsText" class="optional-section-group" style="display: none;">
+          <label for="revisionsTextarea">Revisions Text:</label>
+          <textarea id="revisionsTextarea" placeholder="Enter revision history."></textarea>
+      </div>
+      <div id="addendumGroup" class="optional-section-group" style="display: none;">
+          <label for="addendumTextarea">Addendum Text:</label>
+          <textarea id="addendumTextarea" placeholder="Enter addendum notes."></textarea>
+      </div>
+      <div id="explorerReportsGroup" class="optional-section-group" style="display: none;">
+          <label for="explorerReportsTextarea">Explorer Reports Text:</label>
+          <textarea id="explorerReportsTextarea" placeholder="Enter explorer reports."></textarea>
+      </div>
+      <div id="testLogsGroup" class="optional-section-group" style="display: none;">
+          <label for="testLogsTextarea">Test Logs Text:</label>
+          <textarea id="testLogsTextarea" placeholder="Enter test logs."></textarea>
+      </div>
+      <div id="interviewsGroup" class="optional-section-group" style="display: none;">
+          <label for="interviewsTextarea">Interviews Text:</label>
+          <textarea id="interviewsTextarea" placeholder="Enter interview transcripts."></textarea>
+      </div>
+      <div id="discoveryGroup" class="optional-section-group" style="display: none;">
+          <label for="discoveryTextarea">Discovery Text:</label>
+          <textarea id="discoveryTextarea" placeholder="Enter discovery details."></textarea>
+      </div>
+      <div id="archivedDocsGroup" class="optional-section-group" style="display: none;">
+          <label for="archivedDocsTextarea">Archived Documents Text:</label>
+          <textarea id="archivedDocsTextarea" placeholder="Enter archived documents."></textarea>
+      </div>
+      <div id="audioTranscriptsGroup" class="optional-section-group" style="display: none;">
+          <label for="audioTranscriptsTextarea">Audio Transcripts Text:</label>
+          <textarea id="audioTranscriptsTextarea" placeholder="Enter audio transcripts."></textarea>
+      </div>
+      <div id="timelineGroup" class="optional-section-group" style="display: none;">
+          <label for="timelineTextarea">Timeline Text:</label>
+          <textarea id="timelineTextarea" placeholder="Enter timeline of events."></textarea>
+      </div>
+
+      <div class="button-group" style="margin-top: 20px;">
+        <button id="generateTextBtn">Generate Level Description (Placeholder)</button>
+        <button id="generateImageBtn">Generate Level Image (Placeholder)</button>
         <button id="saveLevelBtn">Save Level</button>
       </div>
 
-      <div id="imageContainer" class="output-container">
-        <!-- Image will be displayed here -->
-      </div>
       <div id="textDescriptionContainer" class="output-container" style="display: none;">
-        <!-- Text description will be displayed here -->
-      </div>
+        </div>
+      <div id="imageContainer" class="output-container" style="display: none;">
+        </div>
     </div>
 
-    <div class="entity-generator card collapsed" style="margin-top: 40px;">
-        <h2>Entity Generator</h2>
-        <button id="entityToggleBtn" type="button" class="collapse-toggle">Expand</button>
+    <div class="generator-toggle-group">
+        <button id="entityToggleBtn" class="generator-toggle" data-active="false">Entity Generator</button>
+        <button id="sublevelToggleBtn" class="generator-toggle" data-active="false">Sub-Level Generator</button>
+    </div>
+
+    <div class="entity-generator card">
+        <h2>Entity Details</h2>
         <div class="input-group">
-            <label for="entityName">Name:</label>
-            <input type="text" id="entityName" placeholder="e.g., The Wanderer">
-        </div>
-        <div class="input-group">
-            <label for="entityHabitatsSelect">Habitat(s):</label>
-            <select id="entityHabitatsSelect" multiple size="5"></select>
-        </div>
-        <div class="input-group" id="entityHabitatManualGroup" style="display:none;">
-            <label for="entityHabitatManual">Manual Habitat Info:</label>
-            <textarea id="entityHabitatManual" placeholder="Describe the entity's habitat(s)."></textarea>
+            <label for="entityName">Entity Name:</label>
+            <input type="text" id="entityName" placeholder="e.g., The Smiler">
         </div>
         <div class="input-group">
             <label for="entityDanger">Danger Level:</label>
             <select id="entityDanger">
-              <option value="Safe (Passive, harmless)">Safe (Passive, harmless)</option>
-              <option value="Low (Minor threat, avoidable)">Low (Minor threat, avoidable)</option>
-              <option value="Medium (Significant threat, requires caution)">Medium (Significant threat, requires caution)</option>
-              <option value="High (Deadly, extremely dangerous)">High (Deadly, extremely dangerous)</option>
-              <option value="Unknown (Highly unpredictable or mysterious)">Unknown (Highly unpredictable or mysterious)</option>
+                <option value="Safe (Passive, harmless)">Safe (Passive, harmless)</option>
+                <option value="Low (Can be avoided)">Low (Can be avoided)</option>
+                <option value="Moderate (Dangerous in groups)">Moderate (Dangerous in groups)</option>
+                <option value="High (Extreme caution required)">High (Extreme caution required)</option>
+                <option value="Deadly, extremely dangerous">Deadly, extremely dangerous</option>
+                <option value="Varies based on conditions">Varies based on conditions</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="entityHabitatsSelect">Known Habitats:</label>
+            <select id="entityHabitatsSelect">
+                <option value="manual">Manual Input</option>
+            </select>
+        </div>
+        <div class="input-group" id="entityHabitatManualGroup" style="display:none;">
+            <label for="entityHabitatManual">Manual Habitat Description:</label>
+            <textarea id="entityHabitatManual" placeholder="e.g., Primarily Level 0, but occasional sightings in Level 1."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityBiology">Biology & Appearance:</label>
+            <textarea id="entityBiology" placeholder="Describe the entity's physical traits, biological makeup, and general look."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityBehaviors">Behaviors & Traits:</label>
+            <textarea id="entityBehaviors" placeholder="Describe how the entity acts, hunts, or interacts with the environment/wanderers."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityDosDonts">Dos and Don'ts (How to Survive):</label>
+            <textarea id="entityDosDonts" placeholder="e.g., DO: Maintain eye contact. DON'T: Approach when lights flicker."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityDiscovery">Discovery/First Contact:</label>
+            <textarea id="entityDiscovery" placeholder="Describe the first documented sighting or capture of this entity."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityAdditional">Additional Notes:</label>
+            <textarea id="entityAdditional" placeholder="Any extra information, theories, or related lore."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="entityImageStyle">Image Style:</label>
+            <select id="entityImageStyle">
+                <option value="photorealistic">Photorealistic</option>
+                <option value="analog horror">Analog Horror (VHS style)</option>
+                <option value="liminal space art">Liminal Space Art</option>
+                <option value="1990s cctv">1990s CCTV footage</option>
+                <option value="anime">Anime/Cartoon style</option>
+                <option value="3d render">Stylized 3D render</option>
             </select>
         </div>
 
-        <!-- New: Entity Linking Section -->
         <div class="input-group">
-          <label>Linked Entities:</label>
-          <div id="entityRelationsContainer" class="relations-container">
-            <!-- Dynamic relation rows will be added here -->
-          </div>
-          <button id="addRelationBtn" type="button" class="small-button">Add New Relation</button>
+            <label>Entity Relations:</label>
+            <div id="entityRelationsContainer">
+                </div>
+            <button id="addRelationBtn" type="button">Add Relationship</button>
         </div>
 
-        <div class="input-group">
-            <label for="entityDescription">Description:</label>
-            <textarea id="entityDescription" placeholder="Describe the entity overall, it's appearence, powers, etc."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="entityBehaviors">Behaviors:</label>
-            <textarea id="entityBehaviors" placeholder="How the entity acts and behaves."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="entityBiology">Biology:</label>
-            <textarea id="entityBiology" placeholder="In-depth physical description and biology."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="entityDiscovery">Discovery:</label>
-            <textarea id="entityDiscovery" placeholder="How and where it was discovered."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="entityAdditional">Additional Info:</label>
-            <textarea id="entityAdditional" placeholder="Any extra notes about the entity."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="entityDosDonts">Do and Don'ts:</label>
-            <textarea id="entityDosDonts" placeholder="Guidelines for encounters (do's and don'ts)."></textarea>
-        </div>
-
-        <div class="input-group">
-          <label for="entityImageStyle">Image Style:</label>
-          <select id="entityImageStyle">
-            <option value="realistic" selected>Realistic</option>
-            <option value="anime">Anime</option>
-            <option value="retro">Retro (Pixelized)</option>
-            <option value="random">Random</option>
-            <option value="lab-test">Clinical Lab Test (Scientists)</option>
-          </select>
-        </div>
-
-        <div class="button-group">
-            <button id="generateEntityTextBtn">Generate Entity Description</button>
-            <button id="generateEntityImageBtn">Generate Entity Image</button>
+        <div class="button-group" style="margin-top: 20px;">
+            <button id="generateEntityTextBtn">Generate Entity Description (Placeholder)</button>
+            <button id="generateEntityImageBtn">Generate Entity Image (Placeholder)</button>
             <button id="saveEntityBtn">Save Entity</button>
         </div>
+
         <div id="entityDescriptionContainer" class="output-container" style="display: none;">
-            <!-- Entity description will be displayed here -->
-        </div>
+            </div>
         <div id="entityImageContainer" class="output-container" style="display: none;">
-            <!-- Entity image will be displayed here -->
-        </div>
+            </div>
     </div>
 
-    <div class="sublevel-generator card collapsed" style="margin-top: 40px;">
-        <h2>Sub-Level Generator</h2>
-        <button id="sublevelToggleBtn" type="button" class="collapse-toggle">Expand</button>
+    <div class="sublevel-generator card">
+        <h2>Sub-Level Details</h2>
         <div class="input-group">
-            <label for="parentLevelSelector">Select Parent Level:</label>
+            <label for="parentLevelSelector">Parent Level:</label>
             <select id="parentLevelSelector">
-                <!-- Options will be populated by JavaScript -->
+                <option value="">Select a Parent Level</option>
+                </select>
+        </div>
+        <div class="input-group">
+            <label for="sublevelNumber">Sub-Level Designation:</label>
+            <input type="text" id="sublevelNumber" placeholder="e.g., Level 0.1">
+        </div>
+        <div class="input-group">
+            <label for="sublevelResemblance">Resemblance to Parent Level:</label>
+            <textarea id="sublevelResemblance" placeholder="How does this sub-level resemble the parent level?"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelDifferences">Key Differences from Parent Level:</label>
+            <textarea id="sublevelDifferences" placeholder="What makes this sub-level unique or dangerous?"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelDescription">Description (Manual/AI Text Input):</label>
+            <textarea id="sublevelDescription" placeholder="A comprehensive overview of the sub-level's environment, dangers, and atmosphere."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelEntities">Known Entities:</label>
+            <textarea id="sublevelEntities" placeholder="Entities unique to or primarily found in this sub-level."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelResources">Resources/Supply Cache:</label>
+            <textarea id="sublevelResources" placeholder="Specific resources or supplies found here."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelStructures">Distinct Structures/Zones:</label>
+            <textarea id="sublevelStructures" placeholder="Any unique rooms, tunnels, or zones."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelEntrances">Entrances to the Sub-Level:</label>
+            <textarea id="sublevelEntrances" placeholder="How to enter this sub-level from its parent or other levels."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelExits">Exits from the Sub-Level:</label>
+            <textarea id="sublevelExits" placeholder="How to exit this sub-level back to the parent or another level."></textarea>
+        </div>
+        <div class="input-group">
+            <label for="sublevelImageStyle">Image Style:</label>
+            <select id="sublevelImageStyle">
+                <option value="photorealistic">Photorealistic</option>
+                <option value="analog horror">Analog Horror (VHS style)</option>
+                <option value="liminal space art">Liminal Space Art</option>
+                <option value="1990s cctv">1990s CCTV footage</option>
+                <option value="anime">Anime/Cartoon style</option>
+                <option value="3d render">Stylized 3D render</option>
             </select>
         </div>
-        <div class="input-group">
-            <label for="sublevelDifferences">Differences from Main Level:</label>
-            <textarea id="sublevelDifferences" placeholder="How does this sub-level differ from the selected main level?"></textarea>
-        </div>
-        <div class="input-group">
-            <label for="sublevelResemblance">Resemblance to Main Level:</label>
-            <textarea id="sublevelResemblance" placeholder="What aspects of the main level does this sub-level retain?"></textarea>
-        </div>
-        <div class="input-group">
-            <label for="sublevelDescription">Sub-Level Description:</label>
-            <textarea id="sublevelDescription" placeholder="Describe the specific environment and atmosphere of this sub-level."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="sublevelEntities">Entities:</label>
-            <textarea id="sublevelEntities" placeholder="Entities specific to this sub-level."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="sublevelResources">Resources:</label>
-            <textarea id="sublevelResources" placeholder="Resources or supplies found within this sub-level."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="sublevelStructures">Structures:</label>
-            <textarea id="sublevelStructures" placeholder="Describe any notable buildings, bases, or formations specific to this sub-level."></textarea>
-        </div>
-        <div class="input-group">
-            <label for="sublevelEntrances">Entrances:</label>
-        <textarea id="sublevelEntrances" placeholder="How to enter this sub-level."></textarea>
-      </div>
-      <div class="input-group">
-        <label for="sublevelExits">Exits:</label>
-        <textarea id="sublevelExits" placeholder="How to exit this sub-level."></textarea>
-      </div>
-      <div class="input-group">
-        <label for="sublevelNumber">Sub-Level Number:</label>
-        <input type="text" id="sublevelNumber" placeholder="e.g., 0.11, 2.5">
-      </div>
-      <div class="input-group">
-        <label for="sublevelImageStyle">Image Style:</label>
-        <select id="sublevelImageStyle">
-          <option value="realistic" selected>Realistic</option>
-          <option value="anime">Anime</option>
-          <option value="retro">Retro (Pixelized)</option>
-          <option value="random">Random</option>
-        </select>
-      </div>
-      <div class="button-group">
-            <button id="generateSubLevelTextBtn">Generate Sub-Level Text</button>
-            <button id="generateSubLevelImageBtn">Generate Sub-Level Image</button>
+
+        <div class="button-group" style="margin-top: 20px;">
+            <button id="generateSubLevelTextBtn">Generate Sub-Level Description (Placeholder)</button>
+            <button id="generateSubLevelImageBtn">Generate Sub-Level Image (Placeholder)</button>
             <button id="saveSubLevelBtn">Save Sub-Level</button>
         </div>
+
         <div id="subLevelDescriptionContainer" class="output-container" style="display: none;">
-            <!-- Sub-Level description will be displayed here -->
-        </div>
+            </div>
         <div id="subLevelImageContainer" class="output-container" style="display: none;">
-            <!-- Sub-Level image will be displayed here -->
-        </div>
+            </div>
     </div>
+
 
     <div class="saved-items card">
-        <h2>Saved Items</h2>
-        <div class="saved-levels-section">
-            <h3>Levels (<span id="savedLevelsCount">0</span>/55)</h3>
-            <div class="saved-tools">
-              <button id="exportLevelsJsonBtn" type="button" class="small-button">Export Levels (JSON)</button>
-              <button id="exportLevelsTxtBtn" type="button" class="small-button">Export Levels (TXT)</button>
-              <button id="importLevelsBtn" type="button" class="small-button">Import Levels (JSON/TXT)</button>
-              <input id="importLevelsFile" type="file" accept=".json,.txt" style="display:none">
-            </div>
-            <ul id="savedLevelsList" class="saved-list">
-                <!-- Saved levels will be listed here -->
-            </ul>
-        </div>
-        <div class="saved-entities-section" style="margin-top: 30px;">
-            <h3>Entities (<span id="savedEntitiesCount">0</span>/75)</h3>
-            <div class="saved-tools">
-              <button id="exportEntitiesJsonBtn" type="button" class="small-button">Export Entities (JSON)</button>
-              <button id="exportEntitiesTxtBtn" type="button" class="small-button">Export Entities (TXT)</button>
-              <button id="importEntitiesBtn" type="button" class="small-button">Import Entities (JSON/TXT)</button>
-              <input id="importEntitiesFile" type="file" accept=".json,.txt" style="display:none">
-            </div>
-            <ul id="savedEntitiesList" class="saved-list">
-                <!-- Saved entities will be listed here -->
-            </ul>
-        </div>
-        <div class="saved-sublevels-section" style="margin-top: 30px;">
-            <h3>Sub-Levels (<span id="savedSubLevelsCount">0</span>/65)</h3>
-            <div class="saved-tools">
-              <button id="exportSubLevelsJsonBtn" type="button" class="small-button">Export Sub-Levels (JSON)</button>
-              <button id="exportSubLevelsTxtBtn" type="button" class="small-button">Export Sub-Levels (TXT)</button>
-              <button id="importSubLevelsBtn" type="button" class="small-button">Import Sub-Levels (JSON/TXT)</button>
-              <input id="importSubLevelsFile" type="file" accept=".json,.txt" style="display:none">
-            </div>
-            <ul id="savedSubLevelsList" class="saved-list">
-                <!-- Saved sub-levels will be listed here -->
-            </ul>
-        </div>
-    </div>
+      <h2>Saved Documents</h2>
 
-  <!-- Expedition Modal -->
-  <div id="expeditionModal" class="modal">
-    <div class="modal-content card">
-      <span class="close-button">&times;</span>
-      <h2>Start an Expedition</h2>
-      <div class="input-group">
-        <label for="expeditionTypeSelect">Choose Expedition Type:</label>
-        <select id="expeditionTypeSelect">
-          <option value="">Select Type</option>
-          <option value="level">Level</option>
-          <option value="sublevel">Sub-Level</option>
-          <option value="entity">Entity</option>
-        </select>
+      <div class="saved-levels-section">
+        <h3>Levels (<span id="savedLevelsCount">0</span>)</h3>
+        <ul id="savedLevelsList" class="saved-list">
+          </ul>
       </div>
-      <div class="input-group">
-        <label for="expeditionTargetSelect">Select Target:</label>
-        <select id="expeditionTargetSelect" disabled>
-          <option value="">Select a Type First</option>
-        </select>
+
+      <div class="saved-entities-section" style="margin-top: 30px;">
+        <h3>Entities (<span id="savedEntitiesCount">0</span>)</h3>
+        <ul id="savedEntitiesList" class="saved-list">
+          </ul>
       </div>
-      <div class="input-group">
-        <label>Expedition Character:</label>
-        <div class="radio-group">
-          <input type="radio" id="scientist" name="expeditionCharacter" value="Scientist" checked>
-          <label for="scientist">Scientist</label>
-          <input type="radio" id="wanderer" name="expeditionCharacter" value="Wanderer">
-          <label for="wanderer">Wanderer</label>
-        </div>
-      </div>
-      <div class="input-group">
-        <label>Character Gender:</label>
-        <div class="radio-group">
-          <input type="radio" id="genderMale" name="characterGender" value="male" checked>
-          <label for="genderMale">Male</label>
-          <input type="radio" id="genderFemale" name="characterGender" value="female">
-          <label for="genderFemale">Female</label>
-          <input type="radio" id="genderOther" name="characterGender" value="non-binary/other">
-          <label for="genderOther">Non-binary/Other</label>
-        </div>
-      </div>
-      <div class="button-group">
-        <button id="startExpeditionBtn">Start Expedition</button>
-      </div>
-      <div id="expeditionReportContainer" class="output-container" style="display: none;">
-        <!-- Expedition report will be displayed here -->
+
+      <div class="saved-sublevels-section" style="margin-top: 30px;">
+        <h3>Sub-Levels (<span id="savedSubLevelsCount">0</span>)</h3>
+        <ul id="savedSubLevelsList" class="saved-list">
+            </ul>
       </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <div id="expeditionModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Start a Simulated Expedition</h2>
+      <p>This feature now uses a static text template since the AI generation is disabled.</p>
+
+      <div class="input-group">
+        <label for="expeditionTypeSelect">Expedition Goal:</label>
+        <select id="expeditionTypeSelect">
+          <option value="Scouting and Mapping">Scouting and Mapping</option>
+          <option value="Entity Observation">Entity Observation</option>
+          <option value="Resource Retrieval (Almond Water)">Resource Retrieval (Almond Water)</option>
+          <option value="Exits Discovery">Exits Discovery</option>
+          <option value="Search and Rescue">Search and Rescue</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="expeditionTargetSelect">Target Level/Location:</label>
+        <select id="expeditionTargetSelect">
+          <option value="">Select a Level (Levels must be saved first)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Character Role:</label>
+        <div class="radio-group">
+          <input type="radio" id="roleExplorer" name="expeditionCharacter" value="Explorer" checked>
+          <label for="roleExplorer">Explorer</label>
+          <input type="radio" id="roleDoctor" name="expeditionCharacter" value="Doctor">
+          <label for="roleDoctor">Doctor</label>
+          <input type="radio" id="roleSoldier" name="expeditionCharacter" value="Soldier">
+          <label for="roleSoldier">Soldier</label>
+          <input type="radio" id="roleEngineer" name="expeditionCharacter" value="Engineer">
+          <label for="roleEngineer">Engineer</label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Character Gender (for narrative context):</label>
+        <div class="radio-group">
+          <input type="radio" id="genderMale" name="characterGender" value="Male" checked>
+          <label for="genderMale">Male</label>
+          <input type="radio" id="genderFemale" name="characterGender" value="Female">
+          <label for="genderFemale">Female</label>
+          <input type="radio" id="genderNonbinary" name="characterGender" value="Nonbinary">
+          <label for="genderNonbinary">Nonbinary</label>
+        </div>
+      </div>
+
+      <button id="startExpeditionBtn" style="margin-top: 10px;">Start Expedition (Placeholder Report)</button>
+
+      <div id="expeditionReportContainer" class="output-container" style="display: none; margin-top: 20px;">
+        </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------------------------------------------------------------------- */
+    /* START OF websim REPLACEMENT AND script.js CONTENT */
+    /* ---------------------------------------------------------------------- */
+
+    // ======================================================================
+    // WEBSIM API REPLACEMENT FUNCTIONS
+    // These functions replace the dependency on websim.chat.completions.create
+    // and websim.imageGen.create. They return placeholder data.
+    // ======================================================================
+
+    /**
+     * Placeholder function for AI text generation.
+     * @param {string} prompt - The prompt (used for context in the placeholder response).
+     * @param {number} wordCount - The target word count (ignored).
+     * @param {string} style - The writing style (ignored).
+     * @returns {Promise<{text: string}>} A promise that resolves to a placeholder text object.
+     */
+    const generateAIText = async (prompt, wordCount, style) => {
+        return new Promise(resolve => {
+            // Simulate network delay
+            setTimeout(() => {
+                const isExpedition = prompt.includes("expedition report");
+                const isEntity = prompt.includes("entity") || prompt.includes("Creature");
+                const isSublevel = prompt.includes("sub-level");
+
+                let title = isExpedition ? "Expedition Report (Simulated)" :
+                            isEntity ? "Entity Description (Simulated)" :
+                            isSublevel ? "Sub-Level Description (Simulated)" :
+                            "Level Description (Simulated)";
+
+                let content = isExpedition ? `
+**[SIMULATED REPORT - WEBSIM API DISABLED]**
+**Goal:** ${expeditionTypeSelect.value} in ${expeditionTargetSelect.options[expeditionTargetSelect.selectedIndex].text}
+**Character:** ${document.querySelector('input[name="expeditionCharacter"]:checked').value} (${document.querySelector('input[name="characterGender"]:checked').value})
+**Report:** The expedition was terminated after 7 hours due to equipment malfunction. The explorer reported intense feelings of déjà vu and a strong sense of being watched from behind corners that were physically impossible to occupy. No physical contact was made with hostile entities, but psychological distress was high. Retrieval was successful via a sudden appearance of a steel fire door labeled "Exit". The core objective was partially met, but the explorer is now undergoing psychiatric evaluation.
+                ` : isEntity ? `
+**[SIMULATED DESCRIPTION - WEBSIM API DISABLED]**
+**Entity Name:** Simu-Entity-55
+**Danger:** ${entityDangerSelector.value}
+**Description:** This entity appears as a tall, shadowy figure with disproportionately long limbs, only partially visible in the periphery of vision. It emits a low, barely audible hum that induces acute paranoia in wanderers. Its known behavior suggests it is attracted to silence and solitude. It is generally hostile but can be deterred by loud, continuous noise. This level of detail is static and does not change based on your input.
+                ` : isSublevel ? `
+**[SIMULATED DESCRIPTION - WEBSIM API DISABLED]**
+**Parent Level:** ${parentLevelSelector.options[parentLevelSelector.selectedIndex].text}
+**Differences:** A heavy, sulfurous smell permeates the air, and the floor is constantly slick with an unknown viscous liquid. The fluorescent lights here are entirely broken, replaced by intermittent, red safety strobes. No entities from the parent level are observed, suggesting this sub-level acts as a territorial boundary for them.
+                ` : `
+**[SIMULATED DESCRIPTION - WEBSIM API DISABLED]**
+The data presented below is a non-AI, generated placeholder.
+**Level Number:** ${levelNumberInput.value || 'Level ?'}
+**Class:** ${levelClassSelector.value}
+**Safety/Security:** ${document.querySelector('input[name="safety"]:checked').value} / ${document.querySelector('input[name="security"]:checked').value}
+**Description:** The level is characterized by infinite expanses of damp, mono-yellow wallpaper and buzzing fluorescent lights. The air is heavy and smells faintly of industrial carpeting and stagnant water. Attempts to map the area have consistently failed, as space appears non-euclidean. This level of detail is static and does not change based on your input.
+                `;
+
+                const finalResponse = `**${title}**\n${content.trim()}`;
+
+                // Return text formatted as if it came from the API
+                resolve({ text: finalResponse });
+            }, 1500); // 1.5 second delay
+        });
+    };
+
+    /**
+     * Placeholder function for AI image generation.
+     * @param {string} prompt - The prompt (used for context in the placeholder image).
+     * @param {string} style - The style (used for context in the placeholder image).
+     * @returns {Promise<string>} A promise that resolves to a Data URI string for a placeholder image.
+     */
+    const generateAIImage = async (prompt, style) => {
+        return new Promise(resolve => {
+            // Simulate network delay
+            setTimeout(() => {
+                console.log(`[WEBSIM REPLACEMENT] Simulating image generation for prompt: "${prompt}" with style: ${style}.`);
+
+                // Create a Data URI for a solid dark grey box with placeholder text using SVG
+                const svgContent = `<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%" fill="#333333"/>
+                    <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="'Roboto Mono', monospace" font-size="30" fill="#8c0000">
+                        WEBSIM API DISABLED
+                    </text>
+                    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="'Roboto Mono', monospace" font-size="20" fill="#aaaaaa">
+                        STATIC PLACEHOLDER IMAGE
+                    </text>
+                    <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" font-family="'Roboto Mono', monospace" font-size="14" fill="#666666">
+                        (Style: ${style} | Prompt: ${prompt.substring(0, 80)}...)
+                    </text>
+                </svg>`;
+
+                const dataUri = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgContent)));
+                resolve(dataUri); // Resolve with the Data URI string
+            }, 1500);
+        });
+    };
+
+    // ======================================================================
+    // START OF ORIGINAL script.js CONTENT
+    // ======================================================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const generateImageBtn = document.getElementById('generateImageBtn');
+      const imageContainer = document.getElementById('imageContainer');
+      const levelNumberInput = document.getElementById('levelNumber');
+      const characteristicsInput = document.getElementById('characteristics');
+      const phenomenaInput = document.getElementById('phenomena');
+      const objectsInput = document.getElementById('objects');
+      const entitiesInput = document.getElementById('entities');
+      const entrancesInput = document.getElementById('entrances');
+      const exitsInput = document.getElementById('exits');
+      const generateTextBtn = document.getElementById('generateTextBtn');
+      const coloniesInput = document.getElementById('colonies');
+      const textDescriptionContainer = document.getElementById('textDescriptionContainer');
+      const wordCountSelector = document.getElementById('wordCount');
+      const levelClassSelector = document.getElementById('levelClass');
+      const safetyRadios = document.querySelectorAll('input[name="safety"]');
+      const securityRadios = document.querySelectorAll('input[name="security"]');
+      const entityCountSelector = document.getElementById('entityCount');
+      const levelStructuresInput = document.getElementById('structures');
+      const levelImageStyleSelector = document.getElementById('levelImageStyle');
+      const customClassNameInput = document.getElementById('customClassName');
+      const customClassGroup = document.getElementById('customClassGroup');
+      const customSafetyGroup = document.getElementById('customSafetyGroup');
+      const customSafetyNameInput = document.getElementById('customSafetyName');
+      const customSecurityGroup = document.getElementById('customSecurityGroup');
+      const customSecurityNameInput = document.getElementById('customSecurityName');
+      const customEntityCountGroup = document.getElementById('customEntityCountGroup');
+      const customEntityCountInput = document.getElementById('customEntityCount');
+      const writingStyleSelector = document.getElementById('writingStyle');
+      const customWritingStyleGroup = document.getElementById('customWritingStyleGroup');
+      const customWritingStyleNameInput = document.getElementById('customWritingStyleName');
+      const customWritingStyleInstructionsInput = document.getElementById('customWritingStyleInstructions');
+      // New: Optional sections
+      const survivalGuideToggle = document.getElementById('survivalGuideToggle');
+      const foundFootagesToggle = document.getElementById('foundFootagesToggle');
+      const foundNotesToggle = document.getElementById('foundNotesToggle');
+      const theoriesToggle = document.getElementById('theoriesToggle');
+      const incidentReportsToggle = document.getElementById('incidentReportsToggle');
+      const revisionsToggle = document.getElementById('revisionsToggle');
+      const addendumToggle = document.getElementById('addendumToggle');
+      const explorerReportsToggle = document.getElementById('explorerReportsToggle');
+      const testLogsToggle = document.getElementById('testLogsToggle');
+      const interviewsToggle = document.getElementById('interviewsToggle');
+      const discoveryToggle = document.getElementById('discoveryToggle');
+      const archivedDocsToggle = document.getElementById('archivedDocsToggle');
+      const audioTranscriptsToggle = document.getElementById('audioTranscriptsToggle');
+      const timelineToggle = document.getElementById('timelineToggle');
+      const addendumGroup = document.getElementById('addendumGroup');
+      const explorerReportsGroup = document.getElementById('explorerReportsGroup');
+      const testLogsGroup = document.getElementById('testLogsGroup');
+      const interviewsGroup = document.getElementById('interviewsGroup');
+      const discoveryGroup = document.getElementById('discoveryGroup');
+      const archivedDocsGroup = document.getElementById('archivedDocsGroup');
+      const audioTranscriptsGroup = document.getElementById('audioTranscriptsGroup');
+      const timelineGroup = document.getElementById('timelineGroup');
+      const survivalGuideText = document.getElementById('survivalGuideTextarea');
+      const foundFootagesText = document.getElementById('foundFootagesTextarea');
+      const foundNotesText = document.getElementById('foundNotesTextarea');
+      const theoriesText = document.getElementById('theoriesTextarea');
+      const incidentReportsText = document.getElementById('incidentReportsTextarea');
+      const revisionsText = document.getElementById('revisionsTextarea');
+      const addendumText = document.getElementById('addendumTextarea');
+      const explorerReportsText = document.getElementById('explorerReportsTextarea');
+      const testLogsText = document.getElementById('testLogsTextarea');
+      const interviewsText = document.getElementById('interviewsTextarea');
+      const discoveryText = document.getElementById('discoveryTextarea');
+      const archivedDocsText = document.getElementById('archivedDocsTextarea');
+      const audioTranscriptsText = document.getElementById('audioTranscriptsTextarea');
+      const timelineText = document.getElementById('timelineTextarea');
+
+      const generateEntityTextBtn = document.getElementById('generateEntityTextBtn');
+      const entityDescriptionContainer = document.getElementById('entityDescriptionContainer');
+      const generateEntityImageBtn = document.getElementById('generateEntityImageBtn');
+      const entityImageContainer = document.getElementById('entityImageContainer');
+      const entityDescriptionInput = document.getElementById('entityDescription');
+      const entityBehaviorsInput = document.getElementById('entityBehaviors');
+      const entityBiologyInput = document.getElementById('entityBiology');
+      const entityDiscoveryInput = document.getElementById('entityDiscovery');
+      const entityAdditionalInput = document.getElementById('entityAdditional');
+      const entityDosDontsInput = document.getElementById('entityDosDonts');
+      const entityNameInput = document.getElementById('entityName');
+      const entityImageStyleSelector = document.getElementById('entityImageStyle');
+      const entityHabitatsSelect = document.getElementById('entityHabitatsSelect');
+      const entityHabitatManualGroup = document.getElementById('entityHabitatManualGroup');
+      const entityHabitatManual = document.getElementById('entityHabitatManual');
+      const entityDangerSelector = document.getElementById('entityDanger');
+
+      const parentLevelSelector = document.getElementById('parentLevelSelector');
+      const sublevelDifferencesInput = document.getElementById('sublevelDifferences');
+      const sublevelResemblanceInput = document.getElementById('sublevelResemblance');
+      const sublevelDescriptionInput = document.getElementById('sublevelDescription');
+      const sublevelEntitiesInput = document.getElementById('sublevelEntities');
+      const sublevelResourcesInput = document.getElementById('sublevelResources');
+      const sublevelEntrancesInput = document.getElementById('sublevelEntrances');
+      const sublevelExitsInput = document.getElementById('sublevelExits');
+      const sublevelNumberInput = document.getElementById('sublevelNumber');
+      const sublevelStructuresInput = document.getElementById('sublevelStructures');
+      const generateSubLevelTextBtn = document.getElementById('generateSubLevelTextBtn');
+      const generateSubLevelImageBtn = document.getElementById('generateSubLevelImageBtn');
+      const subLevelDescriptionContainer = document.getElementById('subLevelDescriptionContainer');
+      const subLevelImageContainer = document.getElementById('subLevelImageContainer');
+      const saveSubLevelBtn = document.getElementById('saveSubLevelBtn');
+      const sublevelImageStyleSelector = document.getElementById('sublevelImageStyle');
+
+      const saveLevelBtn = document.getElementById('saveLevelBtn');
+      const saveEntityBtn = document.getElementById('saveEntityBtn');
+      const savedLevelsList = document.getElementById('savedLevelsList');
+      const savedEntitiesList = document.getElementById('savedEntitiesList');
+      const savedSubLevelsList = document.getElementById('savedSubLevelsList');
+      const savedLevelsCount = document.getElementById('savedLevelsCount');
+      const savedEntitiesCount = document.getElementById('savedEntitiesCount');
+      const savedSubLevelsCount = document.getElementById('savedSubLevelsCount');
+
+      const expeditionsBtn = document.getElementById('expeditionsBtn');
+      const expeditionModal = document.getElementById('expeditionModal');
+      const closeModalBtn = expeditionModal.querySelector('.close-button');
+      const expeditionTypeSelect = document.getElementById('expeditionTypeSelect');
+      const expeditionTargetSelect = document.getElementById('expeditionTargetSelect');
+      const expeditionCharacterRadios = document.querySelectorAll('input[name="expeditionCharacter"]');
+      const characterGenderRadios = document.querySelectorAll('input[name="characterGender"]');
+      const startExpeditionBtn = document.getElementById('startExpeditionBtn');
+      const expeditionReportContainer = document.getElementById('expeditionReportContainer');
+
+      const entityCard = document.querySelector('.entity-generator');
+      const sublevelCard = document.querySelector('.sublevel-generator');
+      const entityToggleBtn = document.getElementById('entityToggleBtn');
+      const sublevelToggleBtn = document.getElementById('sublevelToggleBtn');
+
+      const entityRelationsContainer = document.getElementById('entityRelationsContainer');
+      const addRelationBtn = document.getElementById('addRelationBtn');
+
+      const MAX_LEVELS = 55;
+      const MAX_ENTITIES = 75;
+      const MAX_SUB_LEVELS = 65;
+
+      let currentLoadedEntityId = null;
+
+      const relationshipTypes = [
+        'Evolution Of', 'Parent Of', 'Variant Of', 'Prey Of', 'Predator Of', 'Coexists With', 'Antagonist To'
+      ];
+
+      const baseEntities = [
+        {
+          entityName: "Smiler",
+          entityLook: "black big entity with a big spider body that is invisible in the dark, it has a glowing white smile and two white eyes that can be seen in the dark",
+          entityPowers: "invisible in the dark, attacks any light sources",
+          entityDanger: "Deadly, extremely dangerous",
+          entityOther: "hates lights and attacks any of them"
+        },
+        {
+          entityName: "Bacteria",
+          entityLook: "tall entity made of black entangled wires",
+          entityPowers: "highly aggressive, runs fastly at any wanderers",
+          entityDanger: "Deadly, extremely dangerous",
+          entityOther: "highly aggressive and runs fastly at any wanderers"
+        },
+        {
+          entityName: "Partygoer",
+          entityLook: "humanoid yellow things that hide their body with a yellow big paper costume and a red happy face on it, the costume has two mouths instead of hands",
+          entityPowers: "organizes 'DEADLY parties' with human-based cakes",
+          entityDanger: "Deadly, extremely dangerous",
+          entityOther: "loves DEADLY parties where the cakes are human"
+        },
+        {
+          entityName: "Frowner",
+          entityLook: "black entities with a black big fox body that is invisible in the dark and a frowning glowing white face",
+          entityPowers: "normally passive",
+          entityDanger: "Safe (Passive, harmless)",
+          entityOther: "hates smilers"
+        }
+      ];
+
+      const getSavedLevels = () => {
+        const levels = localStorage.getItem('backroomsLevels');
+        return levels ? JSON.parse(levels) : [];
+      };
+
+      const saveLevels = (levels) => {
+        localStorage.setItem('backroomsLevels', JSON.stringify(levels));
+      };
+
+      const getSavedEntities = () => {
+        const entities = localStorage.getItem('backroomsEntities');
+        return entities ? JSON.parse(entities) : [];
+      };
+
+      const saveEntities = (entities) => {
+        localStorage.setItem('backroomsEntities', JSON.stringify(entities));
+      };
+
+      const getSavedSubLevels = () => {
+        const subLevels = localStorage.getItem('backroomsSubLevels');
+        return subLevels ? JSON.parse(subLevels) : [];
+      };
+
+      const saveSubLevels = (subLevels) => {
+        localStorage.setItem('backroomsSubLevels', JSON.stringify(subLevels));
+      };
+
+      const findLevelById = (id) => getSavedLevels().find(level => level.id === id);
+      const findEntityById = (id) => getSavedEntities().find(entity => entity.id === id);
+      const findSubLevelById = (id) => getSavedSubLevels().find(subLevel => subLevel.id === id);
+
+      const populateParentLevelDropdown = () => {
+        const levels = getSavedLevels();
+        parentLevelSelector.innerHTML = '<option value="">Select a Parent Level</option>';
+        if (levels.length === 0) {
+            parentLevelSelector.disabled = true;
+        } else {
+            parentLevelSelector.disabled = false;
+            levels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.id;
+                option.textContent = level.levelNumber || 'Untitled Level';
+                parentLevelSelector.appendChild(option);
+            });
+        }
+      };
+
+      const populateHabitatOptions = () => {
+        const levels = getSavedLevels(); const subs = getSavedSubLevels();
+        entityHabitatsSelect.innerHTML = '';
+        const addOpt = (val, label) => { const o=document.createElement('option'); o.value=val; o.textContent=label; entityHabitatsSelect.appendChild(o); };
+        addOpt('manual','Manual Input');
+        levels.forEach(l=>addOpt(`L:${l.id}`, `Level ${l.levelNumber||'Untitled'}`));
+        subs.forEach(s=>addOpt(`S:${s.id}`, s.sublevelNumber?`Sub-Level ${s.sublevelNumber}`:`Sub-Level (${s.id.slice(-4)})`));
+      };
+
+      const populateEntityDropdown = (selectElement, excludeId = null) => {
+        const entities = getSavedEntities();
+        selectElement.innerHTML = '<option value="">Select Entity</option>';
+        if (entities.length === 0) {
+          selectElement.disabled = true;
+        } else {
+          selectElement.disabled = false;
+          entities.forEach(entity => {
+            if (entity.id !== excludeId) {
+              const option = document.createElement('option');
+              option.value = entity.id;
+              const displayName = entity.entityName || (entity.entityLook ? entity.entityLook.substring(0, 30) + '...' : 'Untitled Entity');
+              option.textContent = displayName;
+              selectElement.appendChild(option);
+            }
+          });
+        }
+      };
+
+      const addRelationRow = (relationType = '', targetEntityId = '', excludeSelfId = null) => {
+        const relationRow = document.createElement('div');
+        relationRow.classList.add('relation-row');
+
+        const typeSelect = document.createElement('select');
+        typeSelect.classList.add('relation-type-select');
+        relationshipTypes.forEach(type => {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type;
+          typeSelect.appendChild(option);
+        });
+        typeSelect.value = relationType;
+
+        const targetSelect = document.createElement('select');
+        targetSelect.classList.add('relation-target-select');
+        populateEntityDropdown(targetSelect, excludeSelfId);
+        targetSelect.value = targetEntityId;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.classList.add('remove-relation-btn', 'small-button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+          relationRow.remove();
+        });
+
+        relationRow.appendChild(typeSelect);
+        relationRow.appendChild(targetSelect);
+        relationRow.appendChild(removeBtn);
+        entityRelationsContainer.appendChild(relationRow);
+      };
+
+      const renderSavedLevels = () => {
+        const levels = getSavedLevels();
+        savedLevelsList.innerHTML = '';
+        savedLevelsCount.textContent = levels.length;
+
+        levels.forEach(level => {
+          const listItem = document.createElement('li');
+          listItem.setAttribute('data-id', level.id);
+          listItem.innerHTML = `
+            <span class="saved-item-info">${level.levelNumber || 'Untitled Level'} (Class ${level.levelClass || 'Unknown Class'}, ${level.safety}, ${level.security})</span>
+            <div class="saved-item-buttons">
+              <button class="load-btn">Load</button>
+              <button class="delete-btn">Delete</button>
+            </div>
+          `;
+          savedLevelsList.appendChild(listItem);
+        });
+        populateParentLevelDropdown();
+        populateHabitatOptions();
+        populateExpeditionTargetDropdown();
+      };
+
+      const renderSavedEntities = () => {
+        const entities = getSavedEntities();
+        savedEntitiesList.innerHTML = '';
+        savedEntitiesCount.textContent = entities.length;
+
+        entities.forEach(entity => {
+          const listItem = document.createElement('li');
+          listItem.setAttribute('data-id', entity.id);
+          const displayName = entity.entityName || (entity.entityLook ? entity.entityLook.substring(0, 30) + '...' : 'Untitled Entity');
+          listItem.innerHTML = `
+            <span class="saved-item-info">Entity: ${displayName} (Danger: ${entity.entityDanger})</span>
+             <div class="saved-item-buttons">
+              <button class="load-btn">Load</button>
+              <button class="delete-btn">Delete</button>
+            </div>
+          `;
+          savedEntitiesList.appendChild(listItem);
+        });
+      };
+
+      const renderSavedSubLevels = () => {
+        const subLevels = getSavedSubLevels();
+        const allLevels = getSavedLevels();
+        savedSubLevelsList.innerHTML = '';
+        savedSubLevelsCount.textContent = subLevels.length;
+
+        subLevels.forEach(subLevel => {
+            const parentLevel = allLevels.find(level => level.id === subLevel.parentId);
+            const parentName = parentLevel ? (parentLevel.levelNumber || 'Untitled Parent Level') : 'Unknown Parent Level';
+            const subLevelDisplayName = subLevel.sublevelNumber ? `Sub-Level ${subLevel.sublevelNumber}` : `Sub-Level of ${parentName} (ID: ${subLevel.id.substring(subLevel.id.length - 4)})`;
+
+            const listItem = document.createElement('li');
+            listItem.setAttribute('data-id', subLevel.id);
+            listItem.innerHTML = `
+                <span class="saved-item-info">${subLevelDisplayName}</span>
+                <div class="saved-item-buttons">
+                    <button class="load-btn">Load</button>
+                    <button class="delete-btn">Delete</button>
+                </div>
+            `;
+            savedSubLevelsList.appendChild(listItem);
+        });
+      };
+
+      const populateExpeditionTargetDropdown = () => {
+          const levels = getSavedLevels();
+          expeditionTargetSelect.innerHTML = '<option value="">Select a Level</option>';
+          if (levels.length > 0) {
+              levels.forEach(level => {
+                  const option = document.createElement('option');
+                  option.value = level.id;
+                  option.textContent = level.levelNumber || 'Untitled Level';
+                  expeditionTargetSelect.appendChild(option);
+              });
+          }
+      };
+
+      const toggleCustomClass = () => {
+        if (levelClassSelector.value === 'Custom') {
+          customClassGroup.style.display = 'block';
+        } else {
+          customClassGroup.style.display = 'none';
+        }
+      };
+
+      const toggleCustomSafety = () => {
+        const selectedSafety = document.querySelector('input[name="safety"]:checked').value;
+        if (selectedSafety === 'Custom') {
+          customSafetyGroup.style.display = 'block';
+        } else {
+          customSafetyGroup.style.display = 'none';
+        }
+      };
+
+      const toggleCustomSecurity = () => {
+        const selectedSecurity = document.querySelector('input[name="security"]:checked').value;
+        if (selectedSecurity === 'Custom') {
+          customSecurityGroup.style.display = 'block';
+        } else {
+          customSecurityGroup.style.display = 'none';
+        }
+      };
+
+      const toggleCustomEntityCount = () => {
+        if (entityCountSelector.value === 'Custom') {
+          customEntityCountGroup.style.display = 'block';
+        } else {
+          customEntityCountGroup.style.display = 'none';
+        }
+      };
+
+      const toggleCustomWritingStyle = () => {
+          if (writingStyleSelector.value === 'Custom') {
+              customWritingStyleGroup.style.display = 'block';
+          } else {
+              customWritingStyleGroup.style.display = 'none';
+          }
+      };
+
+      const toggleHabitatManual = () => {
+          if (entityHabitatsSelect.value === 'manual') {
+              entityHabitatManualGroup.style.display = 'block';
+          } else {
+              entityHabitatManualGroup.style.display = 'none';
+          }
+      };
+
+      const loadLevel = (levelToLoad) => {
+        levelNumberInput.value = levelToLoad.levelNumber || '';
+        levelClassSelector.value = levelToLoad.levelClass || '0';
+        toggleCustomClass();
+        customClassNameInput.value = levelToLoad.customClassName || '';
+
+        // Safety
+        const safetyRadio = document.getElementById(levelToLoad.safety === 'Custom' ? 'safetyCustom' : levelToLoad.safety.toLowerCase());
+        if (safetyRadio) safetyRadio.checked = true;
+        toggleCustomSafety();
+        customSafetyNameInput.value = levelToLoad.customSafetyName || '';
+
+        // Security
+        const securityRadio = document.getElementById(levelToLoad.security === 'Custom' ? 'securityCustom' : levelToLoad.security.toLowerCase());
+        if (securityRadio) securityRadio.checked = true;
+        toggleCustomSecurity();
+        customSecurityNameInput.value = levelToLoad.customSecurityName || '';
+
+        entityCountSelector.value = levelToLoad.entityCount || 'Devoid of entities';
+        toggleCustomEntityCount();
+        customEntityCountInput.value = levelToLoad.customEntityCount || '';
+
+        characteristicsInput.value = levelToLoad.characteristics || '';
+        phenomenaInput.value = levelToLoad.phenomena || '';
+        objectsInput.value = levelToLoad.objects || '';
+        entitiesInput.value = levelToLoad.entities || '';
+        coloniesInput.value = levelToLoad.colonies || '';
+        entrancesInput.value = levelToLoad.entrances || '';
+        exitsInput.value = levelToLoad.exits || '';
+        levelStructuresInput.value = levelToLoad.structures || '';
+
+        wordCountSelector.value = levelToLoad.wordCount || '200';
+        levelImageStyleSelector.value = levelToLoad.imageStyle || 'photorealistic';
+
+        // Optional Sections
+        const toggleSection = (toggle, group) => {
+            toggle.dataset.active = levelToLoad[`${toggle.id.replace('Toggle', 'Enabled')}`] ? 'true' : 'false';
+            group.style.display = toggle.dataset.active === 'true' ? 'block' : 'none';
+        };
+
+        const updateTextarea = (textarea, content) => {
+            textarea.value = content || '';
+            const toggle = document.getElementById(textarea.id.replace('Textarea', 'Toggle').replace('Text', 'Toggle'));
+            const group = textarea.parentElement;
+            if (toggle && group) {
+                toggleSection(toggle, group);
+            }
+        };
+
+        const resetAndLoadOptionalSections = () => {
+            // Level Description
+            textDescriptionContainer.innerHTML = levelToLoad.generatedText || '';
+            textDescriptionContainer.style.display = levelToLoad.generatedText ? 'block' : 'none';
+
+            // Level Image
+            imageContainer.innerHTML = '';
+            if (levelToLoad.generatedImageUrl) {
+                const levelImage = document.createElement('img');
+                levelImage.src = levelToLoad.generatedImageUrl;
+                levelImage.alt = `Image of ${levelToLoad.levelNumber || 'Level'}`;
+                imageContainer.appendChild(levelImage);
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
+
+            // Text Areas
+            updateTextarea(survivalGuideText, levelToLoad.survivalGuideText);
+            updateTextarea(foundFootagesText, levelToLoad.foundFootagesText);
+            updateTextarea(foundNotesText, levelToLoad.foundNotesText);
+            updateTextarea(theoriesText, levelToLoad.theoriesText);
+            updateTextarea(incidentReportsText, levelToLoad.incidentReportsText);
+            updateTextarea(revisionsText, levelToLoad.revisionsText);
+            updateTextarea(addendumText, levelToLoad.addendumText);
+            updateTextarea(explorerReportsText, levelToLoad.explorerReportsText);
+            updateTextarea(testLogsText, levelToLoad.testLogsText);
+            updateTextarea(interviewsText, levelToLoad.interviewsText);
+            updateTextarea(discoveryText, levelToLoad.discoveryText);
+            updateTextarea(archivedDocsText, levelToLoad.archivedDocsText);
+            updateTextarea(audioTranscriptsText, levelToLoad.audioTranscriptsText);
+            updateTextarea(timelineText, levelToLoad.timelineText);
+        };
+
+        resetAndLoadOptionalSections();
+
+
+        writingStyleSelector.value = levelToLoad.writingStyle || writingStyleSelector.value || 'Clinical (Standard)';
+        toggleCustomWritingStyle();
+        customWritingStyleNameInput.value = levelToLoad.customWritingStyleName || '';
+        customWritingStyleInstructionsInput.value = levelToLoad.customWritingStyleInstructions || '';
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      const loadEntity = (entityToLoad) => {
+        currentLoadedEntityId = entityToLoad.id;
+        entityNameInput.value = entityToLoad.entityName || '';
+        entityDangerSelector.value = entityToLoad.entityDanger || 'Safe (Passive, harmless)';
+        entityBiologyInput.value = entityToLoad.entityBiology || '';
+        entityBehaviorsInput.value = entityToLoad.entityBehaviors || '';
+        entityDosDontsInput.value = entityToLoad.entityDosDonts || '';
+        entityDiscoveryInput.value = entityToLoad.entityDiscovery || '';
+        entityAdditionalInput.value = entityToLoad.entityAdditional || '';
+        entityImageStyleSelector.value = entityToLoad.imageStyle || 'photorealistic';
+        entityHabitatsSelect.value = entityToLoad.habitatId || 'manual';
+        toggleHabitatManual();
+        entityHabitatManual.value = entityToLoad.habitatManual || '';
+
+        entityRelationsContainer.innerHTML = '';
+        entityToLoad.relations.forEach(relation => addRelationRow(relation.type, relation.targetId, entityToLoad.id));
+
+        // Text & Image outputs
+        entityDescriptionContainer.innerHTML = entityToLoad.generatedText || '';
+        entityDescriptionContainer.style.display = entityToLoad.generatedText ? 'block' : 'none';
+
+        entityImageContainer.innerHTML = '';
+        if (entityToLoad.generatedImageUrl) {
+          const entityImage = document.createElement('img');
+          entityImage.src = entityToLoad.generatedImageUrl;
+          entityImage.alt = `Image of ${entityToLoad.entityName || 'Entity'}`;
+          entityImageContainer.appendChild(entityImage);
+          entityImageContainer.style.display = 'block';
+        } else {
+          entityImageContainer.style.display = 'none';
+        }
+
+        // Activate entity generator view
+        entityToggleBtn.dataset.active = 'true';
+        sublevelToggleBtn.dataset.active = 'false';
+        entityCard.classList.add('active');
+        sublevelCard.classList.remove('active');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      const loadSubLevel = (subLevelToLoad) => {
+        parentLevelSelector.value = subLevelToLoad.parentId || '';
+        sublevelNumberInput.value = subLevelToLoad.sublevelNumber || '';
+        sublevelResemblanceInput.value = subLevelToLoad.sublevelResemblance || '';
+        sublevelDifferencesInput.value = subLevelToLoad.sublevelDifferences || '';
+        sublevelDescriptionInput.value = subLevelToLoad.sublevelDescription || '';
+        sublevelEntitiesInput.value = subLevelToLoad.sublevelEntities || '';
+        sublevelResourcesInput.value = subLevelToLoad.sublevelResources || '';
+        sublevelEntrancesInput.value = subLevelToLoad.sublevelEntrances || '';
+        sublevelExitsInput.value = subLevelToLoad.sublevelExits || '';
+        sublevelStructuresInput.value = subLevelToLoad.sublevelStructures || '';
+        sublevelImageStyleSelector.value = subLevelToLoad.imageStyle || 'photorealistic';
+
+        // Text & Image outputs
+        subLevelDescriptionContainer.innerHTML = subLevelToLoad.generatedText || '';
+        subLevelDescriptionContainer.style.display = subLevelToLoad.generatedText ? 'block' : 'none';
+
+        subLevelImageContainer.innerHTML = '';
+        if (subLevelToLoad.generatedImageUrl) {
+            const subLevelImage = document.createElement('img');
+            subLevelImage.src = subLevelToLoad.generatedImageUrl;
+            subLevelImage.alt = `Image of ${subLevelToLoad.sublevelNumber || 'Sub-Level'}`;
+            subLevelImageContainer.appendChild(subLevelImage);
+            subLevelImageContainer.style.display = 'block';
+        } else {
+            subLevelImageContainer.style.display = 'none';
+        }
+
+        // Activate sublevel generator view
+        entityToggleBtn.dataset.active = 'false';
+        sublevelToggleBtn.dataset.active = 'true';
+        entityCard.classList.remove('active');
+        sublevelCard.classList.add('active');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      const resetLevelInputs = () => {
+        levelNumberInput.value = '';
+        levelClassSelector.value = '0';
+        customClassNameInput.value = '';
+        customClassGroup.style.display = 'none';
+        document.getElementById('safe').checked = true;
+        customSafetyNameInput.value = '';
+        customSafetyGroup.style.display = 'none';
+        document.getElementById('secure').checked = true;
+        customSecurityNameInput.value = '';
+        customSecurityGroup.style.display = 'none';
+        entityCountSelector.value = 'Devoid of entities';
+        customEntityCountInput.value = '';
+        customEntityCountGroup.style.display = 'none';
+        characteristicsInput.value = '';
+        phenomenaInput.value = '';
+        objectsInput.value = '';
+        entitiesInput.value = '';
+        coloniesInput.value = '';
+        entrancesInput.value = '';
+        exitsInput.value = '';
+        levelStructuresInput.value = '';
+        wordCountSelector.value = '200';
+        levelImageStyleSelector.value = 'photorealistic';
+        textDescriptionContainer.style.display = 'none';
+        textDescriptionContainer.innerHTML = '';
+        imageContainer.style.display = 'none';
+        imageContainer.innerHTML = '';
+        writingStyleSelector.value = 'Clinical (Standard)';
+        customWritingStyleGroup.style.display = 'none';
+        customWritingStyleNameInput.value = '';
+        customWritingStyleInstructionsInput.value = '';
+
+        // Reset optional section toggles and textareas
+        const toggles = [survivalGuideToggle, foundFootagesToggle, foundNotesToggle, theoriesToggle, incidentReportsToggle, revisionsToggle, addendumToggle, explorerReportsToggle, testLogsToggle, interviewsToggle, discoveryToggle, archivedDocsToggle, audioTranscriptsToggle, timelineToggle];
+        const textareas = [survivalGuideText, foundFootagesText, foundNotesText, theoriesText, incidentReportsText, revisionsText, addendumText, explorerReportsText, testLogsText, interviewsText, discoveryText, archivedDocsText, audioTranscriptsText, timelineText];
+        const groups = [addendumGroup, explorerReportsGroup, testLogsGroup, interviewsGroup, discoveryGroup, archivedDocsGroup, audioTranscriptsGroup, timelineGroup, survivalGuideText.parentElement, foundFootagesText.parentElement, foundNotesText.parentElement, theoriesText.parentElement, incidentReportsText.parentElement, revisionsText.parentElement];
+
+        toggles.forEach(t => t.dataset.active = 'false');
+        groups.forEach(g => g.style.display = 'none');
+        textareas.forEach(t => t.value = '');
+      };
+
+      const resetEntityInputs = () => {
+        currentLoadedEntityId = null;
+        entityNameInput.value = '';
+        entityDangerSelector.value = 'Safe (Passive, harmless)';
+        entityBiologyInput.value = '';
+        entityBehaviorsInput.value = '';
+        entityDosDontsInput.value = '';
+        entityDiscoveryInput.value = '';
+        entityAdditionalInput.value = '';
+        entityImageStyleSelector.value = 'photorealistic';
+        entityHabitatsSelect.value = 'manual';
+        entityHabitatManual.value = '';
+        entityHabitatManualGroup.style.display = 'block'; // Manual is default on reset
+        entityRelationsContainer.innerHTML = '';
+        entityDescriptionContainer.style.display = 'none';
+        entityDescriptionContainer.innerHTML = '';
+        entityImageContainer.style.display = 'none';
+        entityImageContainer.innerHTML = '';
+      };
+
+      const resetSubLevelInputs = () => {
+        parentLevelSelector.value = '';
+        sublevelNumberInput.value = '';
+        sublevelResemblanceInput.value = '';
+        sublevelDifferencesInput.value = '';
+        sublevelDescriptionInput.value = '';
+        sublevelEntitiesInput.value = '';
+        sublevelResourcesInput.value = '';
+        sublevelEntrancesInput.value = '';
+        sublevelExitsInput.value = '';
+        sublevelStructuresInput.value = '';
+        sublevelImageStyleSelector.value = 'photorealistic';
+        subLevelDescriptionContainer.style.display = 'none';
+        subLevelDescriptionContainer.innerHTML = '';
+        subLevelImageContainer.style.display = 'none';
+        subLevelImageContainer.innerHTML = '';
+      };
+
+      const getActiveSectionData = () => {
+        const data = {};
+        const toggles = [
+            { id: 'survivalGuideToggle', textarea: survivalGuideText },
+            { id: 'foundFootagesToggle', textarea: foundFootagesText },
+            { id: 'foundNotesToggle', textarea: foundNotesText },
+            { id: 'theoriesToggle', textarea: theoriesText },
+            { id: 'incidentReportsToggle', textarea: incidentReportsText },
+            { id: 'revisionsToggle', textarea: revisionsText },
+            { id: 'addendumToggle', textarea: addendumText },
+            { id: 'explorerReportsToggle', textarea: explorerReportsText },
+            { id: 'testLogsToggle', textarea: testLogsText },
+            { id: 'interviewsToggle', textarea: interviewsText },
+            { id: 'discoveryToggle', textarea: discoveryText },
+            { id: 'archivedDocsToggle', textarea: archivedDocsText },
+            { id: 'audioTranscriptsToggle', textarea: audioTranscriptsText },
+            { id: 'timelineToggle', textarea: timelineText }
+        ];
+
+        toggles.forEach(t => {
+            const toggleElement = document.getElementById(t.id);
+            const enabledKey = t.id.replace('Toggle', 'Enabled');
+            const contentKey = t.textarea.id.replace('Textarea', 'Text');
+
+            data[enabledKey] = toggleElement.dataset.active === 'true';
+            if (data[enabledKey]) {
+                data[contentKey] = t.textarea.value.trim();
+            } else {
+                data[contentKey] = '';
+            }
+        });
+
+        return data;
+      };
+
+      const saveLevel = () => {
+        const levels = getSavedLevels();
+        const customSafety = document.querySelector('input[name="safety"]:checked').value === 'Custom';
+        const customSecurity = document.querySelector('input[name="security"]:checked').value === 'Custom';
+        const customClass = levelClassSelector.value === 'Custom';
+        const customEntity = entityCountSelector.value === 'Custom';
+        const customStyle = writingStyleSelector.value === 'Custom';
+
+        const newLevel = {
+          id: 'level-' + Date.now(),
+          levelNumber: levelNumberInput.value.trim(),
+          levelClass: levelClassSelector.value,
+          customClassName: customClass ? customClassNameInput.value.trim() : null,
+          safety: document.querySelector('input[name="safety"]:checked').value,
+          customSafetyName: customSafety ? customSafetyNameInput.value.trim() : null,
+          security: document.querySelector('input[name="security"]:checked').value,
+          customSecurityName: customSecurity ? customSecurityNameInput.value.trim() : null,
+          entityCount: entityCountSelector.value,
+          customEntityCount: customEntity ? customEntityCountInput.value.trim() : null,
+          characteristics: characteristicsInput.value.trim(),
+          phenomena: phenomenaInput.value.trim(),
+          objects: objectsInput.value.trim(),
+          entities: entitiesInput.value.trim(),
+          colonies: coloniesInput.value.trim(),
+          entrances: entrancesInput.value.trim(),
+          exits: exitsInput.value.trim(),
+          structures: levelStructuresInput.value.trim(),
+          wordCount: wordCountSelector.value,
+          imageStyle: levelImageStyleSelector.value,
+          writingStyle: writingStyleSelector.value,
+          customWritingStyleName: customStyle ? customWritingStyleNameInput.value.trim() : null,
+          customWritingStyleInstructions: customStyle ? customWritingStyleInstructionsInput.value.trim() : null,
+          generatedText: textDescriptionContainer.innerHTML.trim(),
+          generatedImageUrl: imageContainer.querySelector('img') ? imageContainer.querySelector('img').src : null,
+          ...getActiveSectionData()
+        };
+
+        if (levels.length >= MAX_LEVELS) {
+          alert(`Maximum of ${MAX_LEVELS} levels reached. Please delete an existing level to save a new one.`);
+          return;
+        }
+
+        levels.push(newLevel);
+        saveLevels(levels);
+        renderSavedLevels();
+        alert(`Level ${newLevel.levelNumber || 'Untitled'} saved!`);
+        resetLevelInputs();
+      };
+
+      const saveEntity = () => {
+        let entities = getSavedEntities();
+
+        const relationRows = Array.from(entityRelationsContainer.querySelectorAll('.relation-row'));
+        const relations = relationRows.map(row => ({
+          type: row.querySelector('.relation-type-select').value,
+          targetId: row.querySelector('.relation-target-select').value
+        })).filter(r => r.targetId); // Only save relations with a selected target
+
+        const habitatIsManual = entityHabitatsSelect.value === 'manual';
+
+        const newEntity = {
+          id: currentLoadedEntityId || ('entity-' + Date.now()),
+          entityName: entityNameInput.value.trim(),
+          entityDanger: entityDangerSelector.value,
+          entityBiology: entityBiologyInput.value.trim(),
+          entityBehaviors: entityBehaviorsInput.value.trim(),
+          entityDosDonts: entityDosDontsInput.value.trim(),
+          entityDiscovery: entityDiscoveryInput.value.trim(),
+          entityAdditional: entityAdditionalInput.value.trim(),
+          imageStyle: entityImageStyleSelector.value,
+          habitatId: habitatIsManual ? 'manual' : entityHabitatsSelect.value,
+          habitatManual: habitatIsManual ? entityHabitatManual.value.trim() : null,
+          generatedText: entityDescriptionContainer.innerHTML.trim(),
+          generatedImageUrl: entityImageContainer.querySelector('img') ? entityImageContainer.querySelector('img').src : null,
+          relations: relations
+        };
+
+        const existingIndex = entities.findIndex(e => e.id === newEntity.id);
+        if (existingIndex !== -1) {
+            entities[existingIndex] = newEntity;
+            alert(`Entity ${newEntity.entityName || 'Untitled'} updated!`);
+        } else {
+            if (entities.length >= MAX_ENTITIES) {
+                alert(`Maximum of ${MAX_ENTITIES} entities reached. Please delete an existing entity to save a new one.`);
+                return;
+            }
+            entities.push(newEntity);
+            alert(`Entity ${newEntity.entityName || 'Untitled'} saved!`);
+        }
+
+        saveEntities(entities);
+        renderSavedEntities();
+        resetEntityInputs();
+      };
+
+      const saveSubLevel = () => {
+        const subLevels = getSavedSubLevels();
+        const parentId = parentLevelSelector.value;
+
+        if (!parentId) {
+            alert('Please select a Parent Level before saving the Sub-Level.');
+            return;
+        }
+
+        const newSubLevel = {
+            id: 'sublevel-' + Date.now(),
+            parentId: parentId,
+            sublevelNumber: sublevelNumberInput.value.trim(),
+            sublevelResemblance: sublevelResemblanceInput.value.trim(),
+            sublevelDifferences: sublevelDifferencesInput.value.trim(),
+            sublevelDescription: sublevelDescriptionInput.value.trim(),
+            sublevelEntities: sublevelEntitiesInput.value.trim(),
+            sublevelResources: sublevelResourcesInput.value.trim(),
+            sublevelEntrances: sublevelEntrancesInput.value.trim(),
+            sublevelExits: sublevelExitsInput.value.trim(),
+            sublevelStructures: sublevelStructuresInput.value.trim(),
+            imageStyle: sublevelImageStyleSelector.value,
+            generatedText: subLevelDescriptionContainer.innerHTML.trim(),
+            generatedImageUrl: subLevelImageContainer.querySelector('img') ? subLevelImageContainer.querySelector('img').src : null,
+        };
+
+        if (subLevels.length >= MAX_SUB_LEVELS) {
+            alert(`Maximum of ${MAX_SUB_LEVELS} sub-levels reached. Please delete an existing sub-level to save a new one.`);
+            return;
+        }
+
+        subLevels.push(newSubLevel);
+        saveSubLevels(subLevels);
+        renderSavedSubLevels();
+        alert(`Sub-Level ${newSubLevel.sublevelNumber || 'Untitled'} saved!`);
+        resetSubLevelInputs();
+      };
+
+      const handleDelete = (list, storageKey, renderFn, findFn) => (event) => {
+        if (!event.target.classList.contains('delete-btn')) return;
+        const listItem = event.target.closest('li');
+        const id = listItem.dataset.id;
+        let items = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+        if (confirm(`Are you sure you want to delete this item?`)) {
+          items = items.filter(item => item.id !== id);
+          localStorage.setItem(storageKey, JSON.stringify(items));
+          renderFn();
+
+          // If a deleted level was a parent, refresh the parent dropdown and habitat options
+          if (storageKey === 'backroomsLevels') {
+              // Also delete associated sub-levels
+              let subLevels = getSavedSubLevels();
+              const initialSubLevelCount = subLevels.length;
+              subLevels = subLevels.filter(sub => sub.parentId !== id);
+              if (subLevels.length !== initialSubLevelCount) {
+                  saveSubLevels(subLevels);
+                  renderSavedSubLevels();
+              }
+              populateParentLevelDropdown();
+              populateHabitatOptions();
+              populateExpeditionTargetDropdown();
+          }
+          if (storageKey === 'backroomsEntities') {
+              // Also check for relations pointing to the deleted entity and remove them
+              let allEntities = getSavedEntities();
+              allEntities.forEach(entity => {
+                  entity.relations = entity.relations.filter(r => r.targetId !== id);
+              });
+              saveEntities(allEntities);
+              renderSavedEntities();
+          }
+        }
+      };
+
+      // Wire up buttons
+      generateTextBtn.addEventListener('click', async () => {
+        textDescriptionContainer.style.display = 'block';
+        textDescriptionContainer.innerHTML = 'Generating description (Placeholder)...';
+        generateTextBtn.disabled = true;
+
+        // Gather all inputs for the prompt
+        const levelNumber = levelNumberInput.value.trim() || 'Untitled Level';
+        const levelClass = levelClassSelector.value === 'Custom' ? customClassNameInput.value.trim() : levelClassSelector.value;
+        const safety = document.querySelector('input[name="safety"]:checked').value === 'Custom' ? customSafetyNameInput.value.trim() : document.querySelector('input[name="safety"]:checked').value;
+        const security = document.querySelector('input[name="security"]:checked').value === 'Custom' ? customSecurityNameInput.value.trim() : document.querySelector('input[name="security"]:checked').value;
+        const entityCount = entityCountSelector.value === 'Custom' ? customEntityCountInput.value.trim() : entityCountSelector.value;
+        const characteristics = characteristicsInput.value.trim();
+        const phenomena = phenomenaInput.value.trim();
+        const objects = objectsInput.value.trim();
+        const entities = entitiesInput.value.trim();
+        const colonies = coloniesInput.value.trim();
+        const entrances = entrancesInput.value.trim();
+        const exits = exitsInput.value.trim();
+        const structures = levelStructuresInput.value.trim();
+        const wordCount = wordCountSelector.value;
+        const writingStyle = writingStyleSelector.value === 'Custom' ? customWritingStyleInstructionsInput.value.trim() : writingStyleSelector.value;
+
+        const prompt = `Generate a Backrooms level description for ${levelNumber} (Class ${levelClass}, Safety ${safety}, Security ${security}). Word count: ${wordCount}. Style: ${writingStyle}. Details: Characteristics: ${characteristics}. Phenomena: ${phenomena}. Objects: ${objects}. Entities: ${entities} (${entityCount}). Colonies: ${colonies}. Entrances: ${entrances}. Exits: ${exits}. Structures: ${structures}.`;
+
+        try {
+          const response = await generateAIText(prompt, wordCount, writingStyle);
+          textDescriptionContainer.innerHTML = response.text;
+        } catch (error) {
+          textDescriptionContainer.innerHTML = `Error (Placeholder): Failed to generate text. ${error.message}`;
+        } finally {
+          generateTextBtn.disabled = false;
+        }
+      });
+
+      generateImageBtn.addEventListener('click', async () => {
+        imageContainer.style.display = 'block';
+        imageContainer.innerHTML = 'Generating image (Placeholder)...';
+        generateImageBtn.disabled = true;
+
+        const levelNumber = levelNumberInput.value.trim() || 'Untitled Level';
+        const imageStyle = levelImageStyleSelector.value;
+        const characteristics = characteristicsInput.value.trim();
+        const phenomena = phenomenaInput.value.trim();
+        const entities = entitiesInput.value.trim();
+
+        let prompt = `A horrifying liminal space photo of a backrooms level named ${levelNumber}.`;
+        if (imageStyle === 'photorealistic') { prompt = 'A photorealistic, highly detailed image of a backrooms level.'; }
+        else if (imageStyle === 'analog horror') { prompt = 'A VHS tape screenshot of a backrooms level, low quality, static, analog horror style.'; }
+        else if (imageStyle === 'liminal space art') { prompt = 'A surreal, empty, eerie painting of a backrooms level, liminal space art.'; }
+        else if (imageStyle === '1990s cctv') { prompt = 'Grainy, black and white 1990s CCTV footage of a backrooms level.'; }
+        else if (imageStyle === 'anime') { prompt = 'A dark, moody anime still of a backrooms level.'; }
+        else if (imageStyle === '3d render') { prompt = 'A stylized, low-poly 3D render of a backrooms level.'; }
+
+        prompt += ` Features: ${characteristics}. Phenomena: ${phenomena}. Entities: ${entities}.`;
+
+        try {
+          const imageUrl = await generateAIImage(prompt, imageStyle);
+          imageContainer.innerHTML = '';
+          const levelImage = document.createElement('img');
+          levelImage.src = imageUrl;
+          levelImage.alt = `Image of ${levelNumber}`;
+          imageContainer.appendChild(levelImage);
+        } catch (error) {
+          imageContainer.innerHTML = `Error (Placeholder): Failed to generate image. ${error.message}`;
+        } finally {
+          generateImageBtn.disabled = false;
+        }
+      });
+
+      generateEntityTextBtn.addEventListener('click', async () => {
+        entityDescriptionContainer.style.display = 'block';
+        entityDescriptionContainer.innerHTML = 'Generating entity description (Placeholder)...';
+        generateEntityTextBtn.disabled = true;
+
+        const entityName = entityNameInput.value.trim() || 'Untitled Entity';
+        const entityDanger = entityDangerSelector.value;
+        const entityBiology = entityBiologyInput.value.trim();
+        const entityBehaviors = entityBehaviorsInput.value.trim();
+        const entityDosDonts = entityDosDontsInput.value.trim();
+        const entityDiscovery = entityDiscoveryInput.value.trim();
+        const entityAdditional = entityAdditionalInput.value.trim();
+
+        let habitat;
+        if (entityHabitatsSelect.value === 'manual') {
+            habitat = entityHabitatManual.value.trim();
+        } else {
+            const level = findLevelById(entityHabitatsSelect.value.replace('L:', ''));
+            const subLevel = findSubLevelById(entityHabitatsSelect.value.replace('S:', ''));
+            if (level) habitat = `Level: ${level.levelNumber}`;
+            else if (subLevel) habitat = `Sub-Level: ${subLevel.sublevelNumber || subLevel.id.substring(subLevel.id.length - 4)}`;
+            else habitat = 'Unknown/Manual Input';
+        }
+
+        const prompt = `Generate a Backrooms entity description for "${entityName}". Danger: ${entityDanger}. Habitat: ${habitat}. Biology: ${entityBiology}. Behaviors: ${entityBehaviors}. Survival: ${entityDosDonts}. Discovery: ${entityDiscovery}. Additional: ${entityAdditional}.`;
+
+        try {
+            const response = await generateAIText(prompt, 500, 'Clinical (Standard)');
+            entityDescriptionContainer.innerHTML = response.text;
+        } catch (error) {
+            entityDescriptionContainer.innerHTML = `Error (Placeholder): Failed to generate entity text. ${error.message}`;
+        } finally {
+            generateEntityTextBtn.disabled = false;
+        }
+      });
+
+      generateEntityImageBtn.addEventListener('click', async () => {
+        entityImageContainer.style.display = 'block';
+        entityImageContainer.innerHTML = 'Generating entity image (Placeholder)...';
+        generateEntityImageBtn.disabled = true;
+
+        const entityName = entityNameInput.value.trim() || 'Untitled Entity';
+        const imageStyle = entityImageStyleSelector.value;
+        const entityBiology = entityBiologyInput.value.trim();
+        const entityBehaviors = entityBehaviorsInput.value.trim();
+
+        let prompt = `A terrifying, mysterious photo of the backrooms entity: ${entityName}. Appearance: ${entityBiology}. Action: ${entityBehaviors}.`;
+
+        try {
+            const imageUrl = await generateAIImage(prompt, imageStyle);
+            entityImageContainer.innerHTML = '';
+            const entityImage = document.createElement('img');
+            entityImage.src = imageUrl;
+            entityImage.alt = `Image of ${entityName}`;
+            entityImageContainer.appendChild(entityImage);
+        } catch (error) {
+            entityImageContainer.innerHTML = `Error (Placeholder): Failed to generate entity image. ${error.message}`;
+        } finally {
+            generateEntityImageBtn.disabled = false;
+        }
+      });
+
+      generateSubLevelTextBtn.addEventListener('click', async () => {
+        subLevelDescriptionContainer.style.display = 'block';
+        subLevelDescriptionContainer.innerHTML = 'Generating sub-level description (Placeholder)...';
+        generateSubLevelTextBtn.disabled = true;
+
+        const parentLevel = parentLevelSelector.options[parentLevelSelector.selectedIndex].text;
+        const sublevelNumber = sublevelNumberInput.value.trim() || 'Untitled Sub-Level';
+        const resemblance = sublevelResemblanceInput.value.trim();
+        const differences = sublevelDifferencesInput.value.trim();
+        const entities = sublevelEntitiesInput.value.trim();
+        const resources = sublevelResourcesInput.value.trim();
+        const entrances = sublevelEntrancesInput.value.trim();
+        const exits = sublevelExitsInput.value.trim();
+        const structures = sublevelStructuresInput.value.trim();
+
+        const prompt = `Generate a Backrooms sub-level description for ${sublevelNumber} of ${parentLevel}. Focus on the following key points. Resemblance to Parent: ${resemblance}. Differences: ${differences}. Entities: ${entities}. Resources: ${resources}. Structures: ${structures}. Entrances: ${entrances}. Exits: ${exits}.`;
+
+        try {
+            const response = await generateAIText(prompt, 300, 'Clinical (Standard)');
+            subLevelDescriptionContainer.innerHTML = response.text;
+        } catch (error) {
+            subLevelDescriptionContainer.innerHTML = `Error (Placeholder): Failed to generate sub-level text. ${error.message}`;
+        } finally {
+            generateSubLevelTextBtn.disabled = false;
+        }
+      });
+
+      generateSubLevelImageBtn.addEventListener('click', async () => {
+        subLevelImageContainer.style.display = 'block';
+        subLevelImageContainer.innerHTML = 'Generating sub-level image (Placeholder)...';
+        generateSubLevelImageBtn.disabled = true;
+
+        const sublevelNumber = sublevelNumberInput.value.trim() || 'Untitled Sub-Level';
+        const imageStyle = sublevelImageStyleSelector.value;
+        const differences = sublevelDifferencesInput.value.trim();
+        const entities = sublevelEntitiesInput.value.trim();
+
+        let prompt = `A grim photo of the backrooms sub-level: ${sublevelNumber}. Key differences: ${differences}. Entities present: ${entities}.`;
+
+        try {
+            const imageUrl = await generateAIImage(prompt, imageStyle);
+            subLevelImageContainer.innerHTML = '';
+            const subLevelImage = document.createElement('img');
+            subLevelImage.src = imageUrl;
+            subLevelImage.alt = `Image of ${sublevelNumber}`;
+            subLevelImageContainer.appendChild(subLevelImage);
+        } catch (error) {
+            subLevelImageContainer.innerHTML = `Error (Placeholder): Failed to generate sub-level image. ${error.message}`;
+        } finally {
+            generateSubLevelImageBtn.disabled = false;
+        }
+      });
+
+      startExpeditionBtn.addEventListener('click', async () => {
+        const levelId = expeditionTargetSelect.value;
+        const level = findLevelById(levelId);
+
+        if (!levelId) {
+            expeditionReportContainer.style.display = 'block';
+            expeditionReportContainer.innerHTML = 'Please select a **Target Level/Location** to begin an expedition.';
+            return;
+        }
+
+        expeditionReportContainer.style.display = 'block';
+        expeditionReportContainer.innerHTML = 'Generating expedition report (Placeholder)...';
+        startExpeditionBtn.disabled = true;
+
+        const goal = expeditionTypeSelect.value;
+        const role = document.querySelector('input[name="expeditionCharacter"]:checked').value;
+        const gender = document.querySelector('input[name="characterGender"]:checked').value;
+        const levelName = level.levelNumber || 'Untitled Level';
+
+        const prompt = `Generate an expedition report (narrative) for a ${role} (${gender}) attempting to complete the goal: "${goal}" in level: "${levelName}". The report should be consistent with the chosen gender (${gender}) if possible, though focus on internal experience rather than explicit gendered descriptions unless directly relevant.`;
+
+        try {
+            const response = await generateAIText(prompt, 800, 'Explorer Report');
+            expeditionReportContainer.innerHTML = response.text;
+        } catch (error) {
+            expeditionReportContainer.innerHTML = `Error (Placeholder): Failed to generate expedition report. ${error.message}`;
+        } finally {
+            startExpeditionBtn.disabled = false;
+        }
+      });
+
+      saveLevelBtn.addEventListener('click', saveLevel);
+      saveEntityBtn.addEventListener('click', saveEntity);
+      saveSubLevelBtn.addEventListener('click', saveSubLevel);
+
+      // Event listeners for loading/deleting
+      savedLevelsList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('load-btn')) {
+          const id = event.target.closest('li').dataset.id;
+          const level = findLevelById(id);
+          if (level) loadLevel(level);
+        } else {
+          handleDelete(savedLevelsList, 'backroomsLevels', renderSavedLevels, findLevelById)(event);
+        }
+      });
+
+      savedEntitiesList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('load-btn')) {
+          const id = event.target.closest('li').dataset.id;
+          const entity = findEntityById(id);
+          if (entity) loadEntity(entity);
+        } else {
+          handleDelete(savedEntitiesList, 'backroomsEntities', renderSavedEntities, findEntityById)(event);
+        }
+      });
+
+      savedSubLevelsList.addEventListener('click', (event) => {
+        if (event.target.classList.contains('load-btn')) {
+          const id = event.target.closest('li').dataset.id;
+          const subLevel = findSubLevelById(id);
+          if (subLevel) loadSubLevel(subLevel);
+        } else {
+          handleDelete(savedSubLevelsList, 'backroomsSubLevels', renderSavedSubLevels, findSubLevelById)(event);
+        }
+      });
+
+      // Toggle custom fields
+      levelClassSelector.addEventListener('change', toggleCustomClass);
+      safetyRadios.forEach(radio => radio.addEventListener('change', toggleCustomSafety));
+      securityRadios.forEach(radio => radio.addEventListener('change', toggleCustomSecurity));
+      entityCountSelector.addEventListener('change', toggleCustomEntityCount);
+      writingStyleSelector.addEventListener('change', toggleCustomWritingStyle);
+      entityHabitatsSelect.addEventListener('change', toggleHabitatManual);
+
+      // Toggle Section Visibility
+      const toggleSection = (toggle, group) => {
+          const isActive = toggle.dataset.active === 'true';
+          toggle.dataset.active = isActive ? 'false' : 'true';
+          group.style.display = isActive ? 'none' : 'block';
+      };
+
+      survivalGuideToggle.addEventListener('click', () => toggleSection(survivalGuideToggle, survivalGuideText.parentElement));
+      foundFootagesToggle.addEventListener('click', () => toggleSection(foundFootagesToggle, foundFootagesText.parentElement));
+      foundNotesToggle.addEventListener('click', () => toggleSection(foundNotesToggle, foundNotesText.parentElement));
+      theoriesToggle.addEventListener('click', () => toggleSection(theoriesToggle, theoriesText.parentElement));
+      incidentReportsToggle.addEventListener('click', () => toggleSection(incidentReportsToggle, incidentReportsText.parentElement));
+      revisionsToggle.addEventListener('click', () => toggleSection(revisionsToggle, revisionsText.parentElement));
+      addendumToggle.addEventListener('click', () => toggleSection(addendumToggle, addendumGroup));
+      explorerReportsToggle.addEventListener('click', () => toggleSection(explorerReportsToggle, explorerReportsGroup));
+      testLogsToggle.addEventListener('click', () => toggleSection(testLogsToggle, testLogsGroup));
+      interviewsToggle.addEventListener('click', () => toggleSection(interviewsToggle, interviewsGroup));
+      discoveryToggle.addEventListener('click', () => toggleSection(discoveryToggle, discoveryGroup));
+      archivedDocsToggle.addEventListener('click', () => toggleSection(archivedDocsToggle, archivedDocsGroup));
+      audioTranscriptsToggle.addEventListener('click', () => toggleSection(audioTranscriptsToggle, audioTranscriptsGroup));
+      timelineToggle.addEventListener('click', () => toggleSection(timelineToggle, timelineGroup));
+
+      // Expedition Modal Logic
+      expeditionsBtn.addEventListener('click', () => {
+          populateExpeditionTargetDropdown(); // Refresh targets before opening
+          expeditionModal.style.display = 'block';
+          expeditionReportContainer.style.display = 'none';
+          expeditionReportContainer.innerHTML = '';
+      });
+
+      closeModalBtn.addEventListener('click', () => {
+          expeditionModal.style.display = 'none';
+      });
+
+      window.addEventListener('click', (event) => {
+          if (event.target === expeditionModal) {
+              expeditionModal.style.display = 'none';
+          }
+      });
+
+      // Entity Relations Logic
+      addRelationBtn.addEventListener('click', () => addRelationRow('', '', currentLoadedEntityId));
+
+      // Generator Toggle Logic
+      entityToggleBtn.addEventListener('click', () => {
+          entityToggleBtn.dataset.active = 'true';
+          sublevelToggleBtn.dataset.active = 'false';
+          entityCard.classList.add('active');
+          sublevelCard.classList.remove('active');
+      });
+      sublevelToggleBtn.addEventListener('click', () => {
+          entityToggleBtn.dataset.active = 'false';
+          sublevelToggleBtn.dataset.active = 'true';
+          entityCard.classList.remove('active');
+          sublevelCard.classList.add('active');
+      });
+
+      // Initial render of saved items
+      renderSavedLevels();
+      renderSavedEntities();
+      renderSavedSubLevels();
+    });
+
+    // ======================================================================
+    // END OF script.js CONTENT
+    // ======================================================================
+  </script>
 </body>
 </html>
